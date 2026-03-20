@@ -1,61 +1,71 @@
-import { Text, View, StyleSheet, TextInput, Alert, ScrollView, TouchableOpacity, Modal, FlatList } from 'react-native';
-import { useRouter } from 'expo-router'; 
-import React, { useState, useMemo } from 'react';
-import * as ImagePicker from 'expo-image-picker';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { Receipt, ReceiptItem } from '../../types/types';
+import {
+  Text,
+  View,
+  StyleSheet,
+  TextInput,
+  Alert,
+  ScrollView,
+  TouchableOpacity,
+  Modal,
+  FlatList,
+} from "react-native";
+import { useRouter } from "expo-router";
+import React, { useState, useMemo } from "react";
+import * as ImagePicker from "expo-image-picker";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { Receipt, ReceiptItem } from "../../types/types";
 
 const states = [
-  { name: 'Alabama', taxRate: 4.00 },
-  { name: 'Alaska', taxRate: 0.00 },
-  { name: 'Arizona', taxRate: 5.60 },
-  { name: 'Arkansas', taxRate: 6.50 },
-  { name: 'California', taxRate: 7.25 },
-  { name: 'Colorado', taxRate: 2.90 },
-  { name: 'Connecticut', taxRate: 6.35 },
-  { name: 'Delaware', taxRate: 0.00 },
-  { name: 'Florida', taxRate: 6.00 },
-  { name: 'Georgia', taxRate: 4.00 },
-  { name: 'Hawaii', taxRate: 4.00 },
-  { name: 'Idaho', taxRate: 6.00 },
-  { name: 'Illinois', taxRate: 6.25 },
-  { name: 'Indiana', taxRate: 7.00 },
-  { name: 'Iowa', taxRate: 6.00 },
-  { name: 'Kansas', taxRate: 6.50 },
-  { name: 'Kentucky', taxRate: 6.00 },
-  { name: 'Louisiana', taxRate: 4.45 },
-  { name: 'Maine', taxRate: 5.50 },
-  { name: 'Maryland', taxRate: 6.00 },
-  { name: 'Massachusetts', taxRate: 6.25 },
-  { name: 'Michigan', taxRate: 6.00 },
-  { name: 'Minnesota', taxRate: 6.88 },
-  { name: 'Mississippi', taxRate: 7.00 },
-  { name: 'Missouri', taxRate: 4.23 },
-  { name: 'Montana', taxRate: 0.00 },
-  { name: 'Nebraska', taxRate: 5.50 },
-  { name: 'Nevada', taxRate: 6.85 },
-  { name: 'New Hampshire', taxRate: 0.00 },
-  { name: 'New Jersey', taxRate: 6.63 },
-  { name: 'New Mexico', taxRate: 5.13 },
-  { name: 'New York', taxRate: 4.00 },
-  { name: 'North Carolina', taxRate: 4.75 },
-  { name: 'North Dakota', taxRate: 5.00 },
-  { name: 'Ohio', taxRate: 5.75 },
-  { name: 'Oklahoma', taxRate: 4.50 },
-  { name: 'Oregon', taxRate: 0.00 },
-  { name: 'Pennsylvania', taxRate: 6.00 },
-  { name: 'Rhode Island', taxRate: 7.00 },
-  { name: 'South Carolina', taxRate: 6.00 },
-  { name: 'South Dakota', taxRate: 4.50 },
-  { name: 'Tennessee', taxRate: 7.00 },
-  { name: 'Texas', taxRate: 6.25 },
-  { name: 'Utah', taxRate: 4.85 },
-  { name: 'Vermont', taxRate: 6.00 },
-  { name: 'Virginia', taxRate: 5.30 },
-  { name: 'Washington', taxRate: 6.50 },
-  { name: 'West Virginia', taxRate: 6.00 },
-  { name: 'Wisconsin', taxRate: 5.00 },
-  { name: 'Wyoming', taxRate: 4.00 },
+  { name: "Alabama", taxRate: 4.0 },
+  { name: "Alaska", taxRate: 0.0 },
+  { name: "Arizona", taxRate: 5.6 },
+  { name: "Arkansas", taxRate: 6.5 },
+  { name: "California", taxRate: 7.25 },
+  { name: "Colorado", taxRate: 2.9 },
+  { name: "Connecticut", taxRate: 6.35 },
+  { name: "Delaware", taxRate: 0.0 },
+  { name: "Florida", taxRate: 6.0 },
+  { name: "Georgia", taxRate: 4.0 },
+  { name: "Hawaii", taxRate: 4.0 },
+  { name: "Idaho", taxRate: 6.0 },
+  { name: "Illinois", taxRate: 6.25 },
+  { name: "Indiana", taxRate: 7.0 },
+  { name: "Iowa", taxRate: 6.0 },
+  { name: "Kansas", taxRate: 6.5 },
+  { name: "Kentucky", taxRate: 6.0 },
+  { name: "Louisiana", taxRate: 4.45 },
+  { name: "Maine", taxRate: 5.5 },
+  { name: "Maryland", taxRate: 6.0 },
+  { name: "Massachusetts", taxRate: 6.25 },
+  { name: "Michigan", taxRate: 6.0 },
+  { name: "Minnesota", taxRate: 6.88 },
+  { name: "Mississippi", taxRate: 7.0 },
+  { name: "Missouri", taxRate: 4.23 },
+  { name: "Montana", taxRate: 0.0 },
+  { name: "Nebraska", taxRate: 5.5 },
+  { name: "Nevada", taxRate: 6.85 },
+  { name: "New Hampshire", taxRate: 0.0 },
+  { name: "New Jersey", taxRate: 6.63 },
+  { name: "New Mexico", taxRate: 5.13 },
+  { name: "New York", taxRate: 4.0 },
+  { name: "North Carolina", taxRate: 4.75 },
+  { name: "North Dakota", taxRate: 5.0 },
+  { name: "Ohio", taxRate: 5.75 },
+  { name: "Oklahoma", taxRate: 4.5 },
+  { name: "Oregon", taxRate: 0.0 },
+  { name: "Pennsylvania", taxRate: 6.0 },
+  { name: "Rhode Island", taxRate: 7.0 },
+  { name: "South Carolina", taxRate: 6.0 },
+  { name: "South Dakota", taxRate: 4.5 },
+  { name: "Tennessee", taxRate: 7.0 },
+  { name: "Texas", taxRate: 6.25 },
+  { name: "Utah", taxRate: 4.85 },
+  { name: "Vermont", taxRate: 6.0 },
+  { name: "Virginia", taxRate: 5.3 },
+  { name: "Washington", taxRate: 6.5 },
+  { name: "West Virginia", taxRate: 6.0 },
+  { name: "Wisconsin", taxRate: 5.0 },
+  { name: "Wyoming", taxRate: 4.0 },
 ];
 
 interface Person {
@@ -66,34 +76,80 @@ export default function NewExpense() {
   const router = useRouter();
 
   // Form state
-  const [numPeople, setNumPeople] = useState('');
+  const [numPeople, setNumPeople] = useState("");
   const [people, setPeople] = useState<Person[]>([]);
-  const [expenseName, setExpenseName] = useState('');
-  const [totalAmount, setTotalAmount] = useState('');
-  const [receipt, setReceipt] = useState<ImagePicker.ImagePickerAsset | null>(null);
-  const [selectedState, setSelectedState] = useState('');
+  const [expenseName, setExpenseName] = useState("");
+  const [totalAmount, setTotalAmount] = useState("");
+  const [receipt, setReceipt] = useState<ImagePicker.ImagePickerAsset | null>(
+    null,
+  );
+  const [selectedState, setSelectedState] = useState("");
   const [receiptUploaded, setReceiptUploaded] = useState(false);
-  
+  const [manualReceipt, setManualReceipt] = useState("");
+  const [items, setItems] = useState<
+    { name: string; price: string; assignedTo: string[] }[]
+  >([]);
+
   // State picker modal state
   const [modalVisible, setModalVisible] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Filter states based on search query
   const filteredStates = useMemo(() => {
     if (!searchQuery.trim()) return states;
-    return states.filter(state => 
-      state.name.toLowerCase().includes(searchQuery.toLowerCase())
+    return states.filter((state) =>
+      state.name.toLowerCase().includes(searchQuery.toLowerCase()),
     );
   }, [searchQuery]);
+
+  const addItem = () => {
+    setItems([...items, { name: "", price: "", assignedTo: [] }]);
+  };
+
+  const updateItem = (
+    index: number,
+    field: "name" | "price",
+    value: string,
+  ) => {
+    const newItems = [...items];
+    newItems[index][field] = value;
+    setItems(newItems);
+  };
+
+  const removeItem = (index: number) => {
+    const newItems = [...items];
+    newItems.splice(index, 1);
+    setItems(newItems);
+  };
+
+  const computedTotal = items.reduce((sum, item) => {
+    const price = parseFloat(item.price);
+    return sum + (isNaN(price) ? 0 : price);
+  }, 0);
+
+  const toggleAssignPerson = (itemIndex: number, personName: string) => {
+    const newItems = [...items];
+    const assigned = newItems[itemIndex].assignedTo;
+
+    if (assigned.includes(personName)) {
+      newItems[itemIndex].assignedTo = assigned.filter((p) => p !== personName);
+    } else {
+      newItems[itemIndex].assignedTo.push(personName);
+    }
+
+    setItems(newItems);
+  };
 
   // Handle number of people change
   const handleNumPeopleChange = (text: string) => {
     setNumPeople(text);
     const count = parseInt(text);
     if (!isNaN(count) && count > 0 && count <= 20) {
-      const newPeople = Array(count).fill(null).map(() => ({ name: '' }));
+      const newPeople = Array(count)
+        .fill(null)
+        .map(() => ({ name: "" }));
       setPeople(newPeople);
-    } else if (text === '') {
+    } else if (text === "") {
       setPeople([]);
     }
   };
@@ -106,42 +162,42 @@ export default function NewExpense() {
   };
 
   // Upload receipt functions
-  const takePhoto = async () => {
-    const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert('Permission needed', 'Camera access required');
-      return;
-    }
+  // const takePhoto = async () => {
+  //   const { status } = await ImagePicker.requestCameraPermissionsAsync();
+  //   if (status !== 'granted') {
+  //     Alert.alert('Permission needed', 'Camera access required');
+  //     return;
+  //   }
 
-    const result = await ImagePicker.launchCameraAsync({
-      allowsEditing: true,
-      quality: 0.8,
-    });
+  //   const result = await ImagePicker.launchCameraAsync({
+  //     allowsEditing: true,
+  //     quality: 0.8,
+  //   });
 
-    if (!result.canceled) {
-      setReceipt(result.assets[0]);
-      setReceiptUploaded(true);
-      Alert.alert('Success', 'Receipt uploaded!');
-    }
-  };
+  //   if (!result.canceled) {
+  //     setReceipt(result.assets[0]);
+  //     setReceiptUploaded(true);
+  //     Alert.alert('Success', 'Receipt uploaded!');
+  //   }
+  // };
 
-  const pickImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      quality: 0.8,
-    });
+  // const pickImage = async () => {
+  //   const result = await ImagePicker.launchImageLibraryAsync({
+  //     mediaTypes: ImagePicker.MediaTypeOptions.Images,
+  //     allowsEditing: true,
+  //     quality: 0.8,
+  //   });
 
-    if (!result.canceled) {
-      setReceipt(result.assets[0]);
-      setReceiptUploaded(true);
-      Alert.alert('Success', 'Receipt uploaded!');
-    }
-  };
+  //   if (!result.canceled) {
+  //     setReceipt(result.assets[0]);
+  //     setReceiptUploaded(true);
+  //     Alert.alert('Success', 'Receipt uploaded!');
+  //   }
+  // };
 
   // Get tax rate for selected state
   const getTaxRate = (stateName: string): number => {
-    const state = states.find(s => s.name === stateName);
+    const state = states.find((s) => s.name === stateName);
     return state ? state.taxRate : 0;
   };
 
@@ -149,88 +205,96 @@ export default function NewExpense() {
   const handleSelectState = (stateName: string) => {
     setSelectedState(stateName);
     setModalVisible(false);
-    setSearchQuery('');
+    setSearchQuery("");
   };
 
   // Validate all fields before submitting
   const validateForm = () => {
     if (!numPeople || parseInt(numPeople) <= 0) {
-      Alert.alert('Error', 'Please enter number of people');
+      Alert.alert("Error", "Please enter number of people");
       return false;
     }
-    
-    if (people.some(person => !person.name.trim())) {
-      Alert.alert('Error', 'Please enter all person names');
+
+    if (people.some((person) => !person.name.trim())) {
+      Alert.alert("Error", "Please enter all person names");
       return false;
     }
-    
+
     if (!expenseName.trim()) {
-      Alert.alert('Error', 'Please enter expense name');
+      Alert.alert("Error", "Please enter expense name");
       return false;
     }
-    
+
     if (!totalAmount || parseFloat(totalAmount) <= 0) {
-      Alert.alert('Error', 'Please enter valid total amount');
+      Alert.alert("Error", "Please enter valid total amount");
       return false;
     }
-    
+
     // if (!receiptUploaded) {
     //   Alert.alert('Error', 'Please upload a receipt');
     //   return false;
     // }
-    
+
     if (!selectedState) {
-      Alert.alert('Error', 'Please select a state');
+      Alert.alert("Error", "Please select a state");
       return false;
     }
-    
+
+    if (items.length === 0) {
+      Alert.alert("Error", "Please add at least one item");
+      return false;
+    }
+
+    if (items.some((item) => !item.assignedTo.length)) {
+      Alert.alert("Error", "Each item must be assigned to at least one person");
+      return false;
+    }
+
     return true;
   };
 
   const buildReceipt = (): Receipt => {
-  const amount = parseFloat(totalAmount);
-  const taxRate = getTaxRate(selectedState);
+    const taxRate = getTaxRate(selectedState);
+    const subtotal = items.reduce((sum, item) => {
+      const price = parseFloat(item.price);
+      return sum + (isNaN(price) ? 0 : price);
+    }, 0);
 
-  const taxAmount = amount * (taxRate / 100);
+    const taxAmount = subtotal * (taxRate / 100);
 
-  // Split total into fake items (1 item per person for now)
-  const peopleNames = people.map(p => p.name);
+    const receiptItems: ReceiptItem[] = items.map((item, index) => ({
+      id: index.toString(),
+      name: item.name,
+      price: parseFloat(item.price),
+      assignedTo: item.assignedTo,
+    }));
 
-  const items: ReceiptItem[] = peopleNames.map((person, index) => ({
-    id: index.toString(),
-    name: `Item for ${person}`, // placeholder
-    price: amount / peopleNames.length,
-    assignedTo: [person],
-  }));
-
-  return {
-    items,
-    tax: taxAmount,
+    return {
+      items: receiptItems,
+      tax: taxAmount,
+    };
   };
-};
 
   // Calculate and show split
-const handleSubmit = () => {
-  if (!validateForm()) return;
+  const handleSubmit = () => {
+    if (!validateForm()) return;
 
-  const receiptData = buildReceipt();
+    const receiptData = buildReceipt();
 
-  console.log("RECEIPT:", receiptData);
+    console.log("RECEIPT:", receiptData);
 
-  router.push({
-    pathname: '../GroupScreen',
-    params: {
-      receipt: JSON.stringify(receiptData),
-    },
-  });
-};
+    router.push({
+      pathname: "../GroupScreen",
+      params: {
+        receipt: JSON.stringify(receiptData),
+      },
+    });
+  };
 
   return (
     <ScrollView style={styles.container}>
-
       {/* Form Content */}
       <View style={styles.form}>
-        
         {/* Step 1: Number of People */}
         <View style={styles.section}>
           <Text style={styles.label}>
@@ -274,7 +338,7 @@ const handleSubmit = () => {
             value={expenseName}
             onChangeText={setExpenseName}
           />
-          
+
           <Text style={styles.label}>
             Total amount <Text style={styles.required}>*</Text>
           </Text>
@@ -287,7 +351,7 @@ const handleSubmit = () => {
           />
         </View>
 
-        <View style={styles.section}>
+        {/* <View style={styles.section}>
           <Text style={styles.label}>
             Upload receipt 
           </Text>
@@ -310,6 +374,73 @@ const handleSubmit = () => {
               <Text style={styles.buttonText}> Choose from Gallery</Text>
             </View>
           </TouchableOpacity>
+        </View> */}
+
+        <View style={styles.section}>
+          <Text style={styles.label}>Enter items manually</Text>
+
+          {items.map((item, index) => (
+            <View key={index} style={{ marginBottom: 12 }}>
+              {/* Item Inputs */}
+              <View style={{ flexDirection: "row", marginBottom: 6 }}>
+                <TextInput
+                  style={[styles.input, { flex: 2, marginRight: 8 }]}
+                  placeholder="Item name"
+                  value={item.name}
+                  onChangeText={(text) => updateItem(index, "name", text)}
+                />
+                <TextInput
+                  style={[styles.input, { flex: 1 }]}
+                  placeholder="$0.00"
+                  keyboardType="decimal-pad"
+                  value={item.price}
+                  onChangeText={(text) => updateItem(index, "price", text)}
+                />
+                <TouchableOpacity onPress={() => removeItem(index)}>
+                  <Text style={{ color: "red", fontSize: 20, marginLeft: 8 }}>
+                    ✕
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              {/* 🔥 Assign People */}
+              <Text style={{ fontWeight: "600", marginBottom: 4 }}>
+                Who got this?
+              </Text>
+
+              <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+                {people.map((person, pIndex) => {
+                  const selected = item.assignedTo.includes(person.name);
+
+                  return (
+                    <TouchableOpacity
+                      key={pIndex}
+                      onPress={() => toggleAssignPerson(index, person.name)}
+                      style={{
+                        paddingHorizontal: 10,
+                        paddingVertical: 6,
+                        margin: 4,
+                        borderRadius: 20,
+                        backgroundColor: selected ? "#007AFF" : "#e0e0e0",
+                      }}
+                    >
+                      <Text style={{ color: selected ? "#fff" : "#333" }}>
+                        {person.name}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            </View>
+          ))}
+
+          <TouchableOpacity style={styles.addButton} onPress={addItem}>
+            <Text style={styles.submitButtonText}>+ Add Item</Text>
+          </TouchableOpacity>
+
+          <Text style={{ marginTop: 12, fontWeight: "600" }}>
+            Computed Total: ${computedTotal.toFixed(2)}
+          </Text>
         </View>
 
         {/* Step 5: Select State with Search */}
@@ -318,18 +449,24 @@ const handleSubmit = () => {
             Select your state <Text style={styles.required}>*</Text>
           </Text>
           <Text style={styles.subtitle}>For tax calculation</Text>
-          
+
           {/* Selected State Display */}
-          <TouchableOpacity 
-            style={styles.stateSelector} 
+          <TouchableOpacity
+            style={styles.stateSelector}
             onPress={() => setModalVisible(true)}
           >
-            <Text style={selectedState ? styles.selectedStateText : styles.placeholderText}>
+            <Text
+              style={
+                selectedState
+                  ? styles.selectedStateText
+                  : styles.placeholderText
+              }
+            >
               {selectedState || "Tap to select a state"}
             </Text>
             <Text style={styles.dropdownIcon}>▼</Text>
           </TouchableOpacity>
-          
+
           {selectedState ? (
             <View style={styles.selectedStateInfo}>
               <Text style={styles.selectedStateInfoText}>
@@ -355,21 +492,23 @@ const handleSubmit = () => {
         visible={modalVisible}
         onRequestClose={() => {
           setModalVisible(false);
-          setSearchQuery('');
+          setSearchQuery("");
         }}
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Select State</Text>
-              <TouchableOpacity onPress={() => {
-                setModalVisible(false);
-                setSearchQuery('');
-              }}>
+              <TouchableOpacity
+                onPress={() => {
+                  setModalVisible(false);
+                  setSearchQuery("");
+                }}
+              >
                 <Text style={styles.modalClose}>✕</Text>
               </TouchableOpacity>
             </View>
-            
+
             {/* Search Input */}
             <View style={styles.searchContainer}>
               <TextInput
@@ -380,12 +519,12 @@ const handleSubmit = () => {
                 autoFocus={true}
               />
               {searchQuery.length > 0 ? (
-                <TouchableOpacity onPress={() => setSearchQuery('')}>
+                <TouchableOpacity onPress={() => setSearchQuery("")}>
                   <Text style={styles.clearSearch}>✕</Text>
                 </TouchableOpacity>
               ) : null}
             </View>
-            
+
             {/* States List */}
             <FlatList
               data={filteredStates}
@@ -396,20 +535,30 @@ const handleSubmit = () => {
                 <TouchableOpacity
                   style={[
                     styles.modalStateItem,
-                    selectedState === item.name ? styles.modalStateItemSelected : null
+                    selectedState === item.name
+                      ? styles.modalStateItemSelected
+                      : null,
                   ]}
                   onPress={() => handleSelectState(item.name)}
                 >
-                  <Text style={[
-                    styles.modalStateName,
-                    selectedState === item.name ? styles.modalStateNameSelected : null
-                  ]}>
+                  <Text
+                    style={[
+                      styles.modalStateName,
+                      selectedState === item.name
+                        ? styles.modalStateNameSelected
+                        : null,
+                    ]}
+                  >
                     {item.name}
                   </Text>
-                  <Text style={[
-                    styles.modalStateTax,
-                    selectedState === item.name ? styles.modalStateTaxSelected : null
-                  ]}>
+                  <Text
+                    style={[
+                      styles.modalStateTax,
+                      selectedState === item.name
+                        ? styles.modalStateTaxSelected
+                        : null,
+                    ]}
+                  >
                     {item.taxRate}% tax
                   </Text>
                 </TouchableOpacity>
@@ -430,36 +579,36 @@ const handleSubmit = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#f5f5f5",
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingTop: 50,
     paddingBottom: 15,
     paddingHorizontal: 20,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
+    borderBottomColor: "#e0e0e0",
   },
   backButton: {
     fontSize: 16,
-    color: '#007AFF',
+    color: "#007AFF",
   },
   headerTitle: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   form: {
     padding: 20,
   },
   section: {
     marginBottom: 24,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 12,
     padding: 16,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
@@ -467,145 +616,145 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 8,
-    color: '#333',
+    color: "#333",
   },
   required: {
-    color: '#FF3B30',
+    color: "#FF3B30",
   },
   input: {
-    backgroundColor: '#f8f8f8',
+    backgroundColor: "#f8f8f8",
     padding: 12,
     borderRadius: 8,
     marginBottom: 12,
     fontSize: 16,
     borderWidth: 1,
-    borderColor: '#e0e0e0',
+    borderColor: "#e0e0e0",
   },
   cameraButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: "#007AFF",
     padding: 14,
     borderRadius: 8,
     marginBottom: 10,
   },
   galleryButton: {
-    backgroundColor: '#34C759',
+    backgroundColor: "#34C759",
     padding: 14,
     borderRadius: 8,
   },
   buttonContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
   buttonText: {
-    color: 'white',
+    color: "white",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     marginLeft: 8,
   },
   successContainer: {
-    backgroundColor: '#E8F5E9',
+    backgroundColor: "#E8F5E9",
     padding: 12,
     borderRadius: 8,
     marginBottom: 12,
-    alignItems: 'center',
+    alignItems: "center",
   },
   successText: {
-    color: '#2E7D32',
+    color: "#2E7D32",
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   subtitle: {
     fontSize: 12,
-    color: '#666',
+    color: "#666",
     marginBottom: 12,
   },
   stateSelector: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#f8f8f8',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "#f8f8f8",
     padding: 14,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#e0e0e0',
+    borderColor: "#e0e0e0",
   },
   selectedStateText: {
     fontSize: 16,
-    color: '#333',
-    fontWeight: '500',
+    color: "#333",
+    fontWeight: "500",
   },
   placeholderText: {
     fontSize: 16,
-    color: '#999',
+    color: "#999",
   },
   dropdownIcon: {
     fontSize: 14,
-    color: '#666',
+    color: "#666",
   },
   selectedStateInfo: {
     marginTop: 10,
     padding: 10,
-    backgroundColor: '#E3F2FD',
+    backgroundColor: "#E3F2FD",
     borderRadius: 8,
   },
   selectedStateInfoText: {
     fontSize: 14,
-    color: '#007AFF',
-    textAlign: 'center',
+    color: "#007AFF",
+    textAlign: "center",
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "flex-end",
   },
   modalContent: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    maxHeight: '80%',
-    minHeight: '50%',
+    maxHeight: "80%",
+    minHeight: "50%",
   },
   modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
+    borderBottomColor: "#e0e0e0",
   },
   modalTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: "bold",
+    color: "#333",
   },
   modalClose: {
     fontSize: 24,
-    color: '#999',
+    color: "#999",
     padding: 5,
   },
   searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
+    borderBottomColor: "#e0e0e0",
   },
   searchInput: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#f5f5f5",
     padding: 12,
     borderRadius: 10,
     fontSize: 16,
     borderWidth: 1,
-    borderColor: '#e0e0e0',
+    borderColor: "#e0e0e0",
   },
   clearSearch: {
     fontSize: 18,
-    color: '#999',
+    color: "#999",
     padding: 10,
     marginLeft: 5,
   },
@@ -613,62 +762,69 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   modalStateItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     padding: 15,
     marginBottom: 8,
-    backgroundColor: '#f8f8f8',
+    backgroundColor: "#f8f8f8",
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#e0e0e0',
+    borderColor: "#e0e0e0",
   },
   modalStateItemSelected: {
-    backgroundColor: '#007AFF',
-    borderColor: '#007AFF',
+    backgroundColor: "#007AFF",
+    borderColor: "#007AFF",
   },
   modalStateName: {
     fontSize: 16,
-    color: '#333',
+    color: "#333",
   },
   modalStateNameSelected: {
-    color: '#fff',
-    fontWeight: '600',
+    color: "#fff",
+    fontWeight: "600",
   },
   modalStateTax: {
     fontSize: 14,
-    color: '#666',
+    color: "#666",
   },
   modalStateTaxSelected: {
-    color: '#fff',
+    color: "#fff",
   },
   emptyContainer: {
     padding: 40,
-    alignItems: 'center',
+    alignItems: "center",
   },
   emptyText: {
     fontSize: 16,
-    color: '#999',
+    color: "#999",
   },
   submitButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: "#007AFF",
     padding: 16,
     borderRadius: 12,
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 20,
     marginBottom: 20,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
   },
   submitButtonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   bottomSpacing: {
     height: 40,
+  },
+  addButton: {
+    backgroundColor: "#007AFF",
+    padding: 12,
+    borderRadius: 8,
+    alignItems: "center",
+    marginTop: 8,
   },
 });
