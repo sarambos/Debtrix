@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router';
 import React, { useState, useMemo } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { Receipt, ReceiptItem } from '../../types/types';
 
 const states = [
   { name: 'Alabama', taxRate: 4.00 },
@@ -186,46 +187,46 @@ export default function NewExpense() {
     return true;
   };
 
+  const buildReceipt = (): Receipt => {
+  const amount = parseFloat(totalAmount);
+  const taxRate = getTaxRate(selectedState);
+
+  const taxAmount = amount * (taxRate / 100);
+
+  // Split total into fake items (1 item per person for now)
+  const peopleNames = people.map(p => p.name);
+
+  const items: ReceiptItem[] = peopleNames.map((person, index) => ({
+    id: index.toString(),
+    name: `Item for ${person}`, // placeholder
+    price: amount / peopleNames.length,
+    assignedTo: [person],
+  }));
+
+  return {
+    items,
+    tax: taxAmount,
+  };
+};
+
   // Calculate and show split
 const handleSubmit = () => {
-  console.log("INSIDE HANDLE SUBMIT");
+  if (!validateForm()) return;
 
-  const valid = validateForm();
-  console.log("VALID:", valid);
+  const receiptData = buildReceipt();
 
-  if (!valid) return;
+  console.log("RECEIPT:", receiptData);
 
-    const amount = parseFloat(totalAmount);
-    const taxRate = getTaxRate(selectedState);
-    const taxAmount = amount * (taxRate / 100);
-    const totalWithTax = amount + taxAmount;
-
-    console.log("AMOUNT:", amount);
-    console.log("TAX RATE:", taxRate);
-    console.log("TAX AMOUNT:", taxAmount);
-    console.log("TOTAL WITH TAX:", totalWithTax);
-
-    Alert.alert(
-      'Split Summary',
-      `Expense: ${expenseName}\n` +
-      `Subtotal: $${amount.toFixed(2)}\n` +
-      `Tax (${taxRate}%): $${taxAmount.toFixed(2)}\n` +
-      `Total: $${totalWithTax.toFixed(2)}\n\n`
-    );
-
-    router.push('../GroupScreen');
-  };
+  router.push({
+    pathname: '../GroupScreen',
+    params: {
+      receipt: JSON.stringify(receiptData),
+    },
+  });
+};
 
   return (
     <ScrollView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <Text style={styles.backButton}>← Back</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>New Expense</Text>
-        <View style={{ width: 40 }} />
-      </View>
 
       {/* Form Content */}
       <View style={styles.form}>

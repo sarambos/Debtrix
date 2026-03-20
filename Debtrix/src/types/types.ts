@@ -8,6 +8,24 @@ export type Transaction = {
     type: "paid" | "received";
 }
 
+export type TransactionItem = {
+    id: string;
+    name: string;
+    price: number;
+    participants: string[];
+    taxRate?: number;
+}
+
+export type Expense = {
+    id: string;
+    numPeople: number;
+    people: string[];
+    type: string;
+    totalAmount: number;
+    receipt: Receipt;
+    state: string;
+}
+
 export type ReceiptItem = {
     id: string;
     name: string;
