@@ -45,8 +45,9 @@ export default function BalanceList({receipt}: Props) {
   return (
     <View style={styles.container}>
       {result.map(({person, amount}) => (
-        <Text key={person}>
-            {person} owes ${amount.toFixed(2)}
+        <Text key={person} style={styles.card}>
+          <Text style={styles.person}>{person}</Text>
+          <Text style={styles.amount}> owes ${amount.toFixed(2)}</Text>
         </Text>
       ))}
     </View>
@@ -56,11 +57,30 @@ export default function BalanceList({receipt}: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#25292e',
-    justifyContent: 'center',
+    backgroundColor: '#fff',
     alignItems: 'center',
+    padding: 16,
   },
   text: {
     color: '#fff',
+  },
+  card: {
+    backgroundColor: '#3b3f45',
+    width: '90%',
+    padding: 12,
+    marginVertical: 6,
+    borderRadius: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  person: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  amount: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });

@@ -2,6 +2,9 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import { Receipt, ReceiptItem } from '../types/types';
 import BalanceList from '../components/BalanceList';
+import { useRouter } from 'expo-router';
+import { useNavigation } from '@react-navigation/native';
+import { useLayoutEffect } from 'react';
 
 const receiptItems: ReceiptItem[] = [
   { id: "1", name: "Burger", price: 12, assignedTo: ["Stephanie"] },
@@ -20,11 +23,21 @@ const receipt: Receipt = {
 };
 
 export default function Split() {
+  const router = useRouter();
+  const navigation = useNavigation();
+
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            title: 'Split Report',
+            headerTitleAlign: "center"
+        });
+    }, [navigation]);
+
   return (
-    <View style={styles.container}>
-      <BalanceList receipt={receipt}/>
-      <StatusBar style="auto" />
-    </View>
+      <View style={styles.container}>
+        <BalanceList receipt={receipt}/>
+        <StatusBar style="auto" />
+      </View>
   );
 }
 
@@ -32,7 +45,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
     justifyContent: 'center',
   },
 });
