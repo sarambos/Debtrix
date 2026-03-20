@@ -6,15 +6,15 @@ export default function TabLayout() {
     <Tabs
     screenOptions={{
       headerStyle: {
-        backgroundColor: "#fff",
+        backgroundColor: "#D7d9ce",
       },
       headerTitleStyle: {
         fontWeight: "bold",
-        color: "#000",
+        color: "#0c7489",
       },
       headerTitleAlign: "center",
       tabBarLabelPosition: "below-icon",
-      tabBarActiveTintColor: "#0000ff",
+      tabBarActiveTintColor: "#119da4",
       tabBarInactiveTintColor: "#808080"
     }}
     >
@@ -39,10 +39,11 @@ export default function TabLayout() {
       <Tabs.Screen
         name="settings"
         options={{
-          title: 'Settings',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="settings" size={size} color={color} />
-          ),
+          href: null,
+          // title: 'Settings',
+          // tabBarIcon: ({ color, size }) => (
+          //   <Ionicons name="settings" size={size} color={color} />
+          // ),
         }}
       />
     </Tabs>

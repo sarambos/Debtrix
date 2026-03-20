@@ -579,7 +579,7 @@ export default function NewExpense() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#119da4",
   },
   header: {
     flexDirection: "row",
@@ -588,13 +588,13 @@ const styles = StyleSheet.create({
     paddingTop: 50,
     paddingBottom: 15,
     paddingHorizontal: 20,
-    backgroundColor: "#fff",
+    backgroundColor: "#d7d9ce",
     borderBottomWidth: 1,
     borderBottomColor: "#e0e0e0",
   },
   backButton: {
     fontSize: 16,
-    color: "#007AFF",
+    color: "#13505b",
   },
   headerTitle: {
     fontSize: 18,
@@ -605,7 +605,7 @@ const styles = StyleSheet.create({
   },
   section: {
     marginBottom: 24,
-    backgroundColor: "#fff",
+    backgroundColor: "#d7d9ce",
     borderRadius: 12,
     padding: 16,
     shadowColor: "#000",
@@ -618,19 +618,19 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     marginBottom: 8,
-    color: "#333",
+    color: "#0c7489",
   },
   required: {
     color: "#FF3B30",
   },
   input: {
-    backgroundColor: "#f8f8f8",
+    backgroundColor: "#d7d9ce",
     padding: 12,
     borderRadius: 8,
     marginBottom: 12,
     fontSize: 16,
     borderWidth: 1,
-    borderColor: "#e0e0e0",
+    borderColor: "#808080",
   },
   cameraButton: {
     backgroundColor: "#007AFF",
@@ -649,7 +649,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   buttonText: {
-    color: "white",
+    color: "#040404",
     fontSize: 16,
     fontWeight: "600",
     marginLeft: 8,
@@ -668,41 +668,41 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 12,
-    color: "#666",
+    color: "#oc7489",
     marginBottom: 12,
   },
   stateSelector: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "#f8f8f8",
+    backgroundColor: "#d7d9ce",
     padding: 14,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#e0e0e0",
+    borderColor: "#808080",
   },
   selectedStateText: {
     fontSize: 16,
-    color: "#333",
+    color: "#040404",
     fontWeight: "500",
   },
   placeholderText: {
     fontSize: 16,
-    color: "#999",
+    color: "#808080",
   },
   dropdownIcon: {
     fontSize: 14,
-    color: "#666",
+    color: "#119da4",
   },
   selectedStateInfo: {
     marginTop: 10,
     padding: 10,
-    backgroundColor: "#E3F2FD",
+    backgroundColor: "#d7d9ce",
     borderRadius: 8,
   },
   selectedStateInfoText: {
     fontSize: 14,
-    color: "#007AFF",
+    color: "#119da4",
     textAlign: "center",
   },
   modalOverlay: {
@@ -711,7 +711,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   modalContent: {
-    backgroundColor: "#fff",
+    backgroundColor: "#119da4",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     maxHeight: "80%",
@@ -728,7 +728,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#333",
+    color: "#13505b",
   },
   modalClose: {
     fontSize: 24,
@@ -745,7 +745,7 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#d7d9ce",
     padding: 12,
     borderRadius: 10,
     fontSize: 16,
@@ -767,14 +767,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 15,
     marginBottom: 8,
-    backgroundColor: "#f8f8f8",
+    backgroundColor: "#d7d9ce",
     borderRadius: 10,
     borderWidth: 1,
     borderColor: "#e0e0e0",
   },
   modalStateItemSelected: {
-    backgroundColor: "#007AFF",
-    borderColor: "#007AFF",
+    backgroundColor: "#13505b",
+    borderColor: "#040404",
   },
   modalStateName: {
     fontSize: 16,
@@ -800,7 +800,7 @@ const styles = StyleSheet.create({
     color: "#999",
   },
   submitButton: {
-    backgroundColor: "#007AFF",
+    backgroundColor: "#13505b",
     padding: 16,
     borderRadius: 12,
     alignItems: "center",
@@ -821,7 +821,7 @@ const styles = StyleSheet.create({
     height: 40,
   },
   addButton: {
-    backgroundColor: "#007AFF",
+    backgroundColor: "#13505b",
     padding: 12,
     borderRadius: 8,
     alignItems: "center",
