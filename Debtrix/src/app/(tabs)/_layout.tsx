@@ -4,7 +4,21 @@ import { Ionicons } from '@expo/vector-icons';
 
 export default function TabLayout() {
   return (
-    <Tabs>
+    <Tabs
+    screenOptions={{
+      headerStyle: {
+        backgroundColor: "#fff",
+      },
+      headerTitleStyle: {
+        fontWeight: "bold",
+        color: "#000",
+      },
+      headerTitleAlign: "center",
+      tabBarLabelPosition: "below-icon",
+      tabBarActiveTintColor: "#0000ff",
+      tabBarInactiveTintColor: "#808080"
+    }}
+    >
       <Tabs.Screen 
         name="index" 
         options={{ 
@@ -12,7 +26,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="home" size={size} color={color} />
           ),
-        }} 
+        }}
       />
       <Tabs.Screen 
         name="new-expense" 
@@ -30,6 +44,13 @@ export default function TabLayout() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="settings" size={size} color={color} />
           ),
+        }}
+      />
+      <Tabs.Screen
+        name="GroupScreen"
+        options={{
+          title: 'Split Report',
+          href: null,
         }}
       />
     </Tabs>

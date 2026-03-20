@@ -7,3 +7,16 @@ export type Transaction = {
     participants: string[];
     type: "paid" | "received";
 }
+
+export type ReceiptItem = {
+    id: string;
+    name: string;
+    price: number;
+    assignedTo: string[];
+}
+
+export type Receipt = {
+    items: ReceiptItem[];
+    tax: number;
+    tip?: number;
+}
