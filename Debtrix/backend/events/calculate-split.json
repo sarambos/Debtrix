@@ -1,0 +1,16 @@
+{
+    "version": "2.0",
+    "routeKey": "POST /calculate-split",
+    "rawPath": "/calculate-split",
+    "headers": {
+        "content-type": "application/json"
+    },
+    "requestContext": {
+        "http": {
+            "method": "POST",
+            "path": "/calculate-split"
+        }
+    },
+    "body": "{\n    \"amount\": 100,\n    \"splitType\": \"equal\"\n}",
+    "isBase64Encoded": false
+}

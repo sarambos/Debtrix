@@ -35,6 +35,17 @@ export type ReceiptItem = {
 
 export type Receipt = {
     items: ReceiptItem[];
+    subtotal: number;
     tax: number;
-    tip?: number;
+    tip: number;
+    total: number;
 }
+
+export type PersonBreakdown = {
+  person: string;
+  total: number;
+  items: {
+    name: string;
+    amount: number;
+  }[];
+};

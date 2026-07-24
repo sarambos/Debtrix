@@ -1,29 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import { Receipt, ReceiptItem } from '../types/types';
+import { StyleSheet, View } from 'react-native';
 import BalanceList from '../components/BalanceList';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { useNavigation } from '@react-navigation/native';
 import { useLayoutEffect } from 'react';
 
-// const receiptItems: ReceiptItem[] = [
-//   { id: "1", name: "Burger", price: 12, assignedTo: ["Stephanie"] },
-//   { id: "2", name: "Fries", price: 6, assignedTo: ["Stephanie", "Alex"] },
-//   { id: "3", name: "Drink", price: 4, assignedTo: ["Alex"] },
-// ];
-
-// const receipt: Receipt = {
-//   items: [
-//     { id: "1", name: "Burger", price: 12, assignedTo: ["Stephanie"] },
-//     { id: "2", name: "Fries", price: 6, assignedTo: ["Stephanie", "Alex"] },
-//     { id: "3", name: "Drink", price: 4, assignedTo: ["Alex"] },
-//   ],
-//   tax: 2.2,
-//   tip: 3,
-// };
-
 export default function Split() {
-  const router = useRouter();
   const { receipt } = useLocalSearchParams();
   const navigation = useNavigation();
 

@@ -1,0 +1,28 @@
+{
+  "name": "debtrix-backend",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "sam build",
+    "test": "jest",
+    "deploy": "sam build && sam deploy",
+    "deploy:guided": "sam build && sam deploy --guided",
+    "local:api": "sam build && sam local start-api"
+  },
+  "dependencies": {
+    "esbuild": "^0.28.1",
+    "@aws-sdk/client-dynamodb": "^3.0.0",
+    "@aws-sdk/lib-dynamodb": "^3.0.0",
+    "@aws-sdk/client-s3": "^3.0.0",
+    "@aws-sdk/s3-request-presigner": "^3.0.0",
+    "@aws-sdk/client-textract": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.92",
+    "@types/jest": "^30.0.0",
+    "esbuild": "^0.28.1",
+    "jest": "^30.0.0",
+    "ts-jest": "^29.0.5",
+    "typescript": "^5.9.0"
+  }
+}

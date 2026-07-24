@@ -1,74 +1,9 @@
 import { Text, View, StyleSheet } from 'react-native';
-import { Receipt } from '../types/types';
+import { PersonBreakdown, Receipt } from '../types/types';
+import calculateBalances from '../lib/calculateBalances';
 
 type Props = {
     receipt: Receipt;
-};
-
-type PersonBreakdown = {
-  person: string;
-  total: number;
-  items: {
-    name: string;
-    amount: number;
-  }[];
-};
-
-const calculateBalances = (receipt: Receipt): PersonBreakdown[] => {
-  const balances: Record<string, number> = {};
-  const itemMap: Record<string, { name: string; amount: number }[]> = {};
-
-  receipt.items.forEach((item) => {
-    const split = item.price / item.assignedTo.length;
-
-    item.assignedTo.forEach((person) => {
-      if (!balances[person]) balances[person] = 0;
-      if (!itemMap[person]) itemMap[person] = [];
-      balances[person] += split;
-
-      itemMap[person].push({
-        name: item.name,
-        amount: split,
-      });
-    });
-  });
-
-  const subtotal = Object.values(balances).reduce((a, b) => a + b, 0);
-
-  Object.keys(balances).forEach((person) => {
-    const proportion = balances[person] / subtotal;
-    const taxShare = (receipt.tax || 0) * proportion;
-
-    balances[person] += taxShare;
-
-    itemMap[person].push({
-      name: "Tax",
-      amount: taxShare,
-    });
-  });
-
-  if (receipt.tip) {
-    Object.keys(balances).forEach((person) => {
-      const proportion = balances[person] / subtotal;
-      const tipShare = receipt.tip! * proportion;
-
-      balances[person] += tipShare;
-
-      itemMap[person].push({
-        name: "Tip",
-        amount: tipShare,
-      });
-    });
-  }
-
-  return Object.keys(balances).map((person) => ({
-    person,
-    total: parseFloat(balances[person].toFixed(2)),
-    items: itemMap[person].map((item) => ({
-      name: item.name,
-      amount: parseFloat(item.amount.toFixed(2)),
-    })),
-  }));
 };
 
 export default function BalanceList({receipt}: Props) { 
@@ -76,7 +11,7 @@ export default function BalanceList({receipt}: Props) {
 
   return (
     <View style={styles.container}>
-      {result.map((personData) => (
+      {result.map((personData: PersonBreakdown) => (
         <View key={personData.person} style={styles.card}>
           
           {/* Header */}

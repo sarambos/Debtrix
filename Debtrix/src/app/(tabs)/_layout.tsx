@@ -40,10 +40,6 @@ export default function TabLayout() {
         name="settings"
         options={{
           href: null,
-          // title: 'Settings',
-          // tabBarIcon: ({ color, size }) => (
-          //   <Ionicons name="settings" size={size} color={color} />
-          // ),
         }}
       />
     </Tabs>
