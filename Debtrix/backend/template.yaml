@@ -42,11 +42,54 @@ Resources:
             ApiId: !Ref DebtrixHttpApi
             Path: /calculate-split
             Method: POST
+      Environment:
+        Variables:
+          RECEIPTS_TABLE_NAME: !Ref ReceiptsTable
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ReceiptsTable
     Metadata:
       BuildMethod: esbuild
       BuildProperties:
         EntryPoints:
           - src/calculateSplit/handler.ts
+        Minify: true
+        Sourcemap: true
+        Target: es2022
+  ReceiptsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: receiptId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: receiptId
+          KeyType: HASH
+  ListReceiptsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: src/listReceipts/handler.handler
+      Runtime: nodejs22.x
+      Environment:
+        Variables:
+          RECEIPTS_TABLE_NAME: !Ref ReceiptsTable
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref ReceiptsTable
+      Events:
+        ListReceiptsApi:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref DebtrixHttpApi
+            Path: /receipts
+            Method: get
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        EntryPoints:
+          - src/listReceipts/handler.ts
         Minify: true
         Sourcemap: true
         Target: es2022

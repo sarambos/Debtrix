@@ -1,5 +1,5 @@
 import { environment } from "../config/environment";
-import { CalculateSplitResult, Receipt } from "../types/types";
+import type { CalculateSplitResult, Receipt } from "../types/types";
 
 type ApiErrorBody = {
     message?: string;

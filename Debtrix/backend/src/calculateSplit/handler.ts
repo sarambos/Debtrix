@@ -1,5 +1,6 @@
 import type { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
 import { calculateSplit, CalculateSplitInput } from "./calculateSplit";
+import { saveReceipt, ReceiptRecord } from "../repositories/receiptRepo";
 
 const headers = {
     "Content-Type": "application/json",
@@ -24,10 +25,27 @@ export async function handler(event: APIGatewayProxyEventV2): Promise<APIGateway
 
         const result = calculateSplit(input);
 
-        return response(200, result);
+        const receipt: ReceiptRecord = {
+            receiptId: crypto.randomUUID(),
+            createdAt: new Date().toISOString(),
+            items: input.items,
+            ...result
+        };
+
+        await saveReceipt(receipt);
+
+        return {
+            statusCode: 200,
+            headers: headers,
+            body: JSON.stringify(receipt)
+        };
     } catch (error) {
         const message = error instanceof Error ? error.message : "Unable to calculate split";
 
-        return response(400, { message });
+        return {
+            statusCode: 400,
+            headers: headers,
+            body: JSON.stringify({ message })
+        };
     }
 }
