@@ -4,9 +4,10 @@ import BalanceList from '../components/BalanceList';
 import { useLocalSearchParams } from 'expo-router';
 import { useNavigation } from '@react-navigation/native';
 import { useLayoutEffect } from 'react';
+import { CalculateSplitResult } from '../types/types';
 
 export default function Split() {
-  const { receipt } = useLocalSearchParams();
+  const { splitResult } = useLocalSearchParams<{ splitResult?: string;}>();
   const navigation = useNavigation();
 
     useLayoutEffect(() => {
@@ -16,13 +17,14 @@ export default function Split() {
         });
     }, [navigation]);
 
-    const parsedReceipt = receipt
-        ? JSON.parse(receipt as string)
+    const parsedResult: CalculateSplitResult | null =
+      typeof splitResult === "string"
+        ? JSON.parse(splitResult)
         : null;
 
   return (
       <View style={styles.container}>
-        <BalanceList receipt={parsedReceipt}/>
+        <BalanceList result={parsedResult}/>
         <StatusBar style="auto" />
       </View>
   );

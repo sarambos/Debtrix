@@ -9,13 +9,15 @@ import StateSection from "../../components/newExpense/StateSection";
 import TipSection from "../../components/newExpense/TipSection";
 import { useNewExpenseForm } from "../../hooks/useNewExpenseForm";
 import { buildReceipt, validateNewExpenseForm } from '../../lib/newExpense'
+import { calculateSplitOnAws } from "../../api/debtrixApi";
 
 export default function NewExpense() {
   const router = useRouter();
   const form = useNewExpenseForm();
   const [statePickerVisible, setStatePickerVisible] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const formState = form.getFormState();
     const validationError = validateNewExpenseForm(formState);
 
@@ -24,15 +26,26 @@ export default function NewExpense() {
       return;
     }
 
-    const receipt = buildReceipt(formState);
+    try {
+      setIsSubmitting(true);
 
-    router.push({
-      pathname: "../GroupScreen",
-      params: {
-        expenseName: form.expenseName.trim(),
-        receipt: JSON.stringify(receipt)
-      }
-    });
+      const receipt = buildReceipt(formState);
+      const splitResult = await calculateSplitOnAws(receipt);
+
+      router.push({
+        pathname: "../GroupScreen",
+        params: {
+          expenseName: form.expenseName.trim(),
+          splitResult: JSON.stringify(splitResult)
+        }
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unable to connect to the Debtrix server.";
+
+      Alert.alert("Unable to calculate split", message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -87,11 +100,14 @@ export default function NewExpense() {
           onCustomTipChange={form.setCustomTipAmount}
         />
         <TouchableOpacity
-          style={styles.submitButton}
+          style={[styles.submitButton, isSubmitting && styles.submitButtonDisabled]}
           onPress={handleSubmit}
           accessibilityRole="button"
+          disabled={isSubmitting}
         >
-          <Text style={styles.submitButtonText}>Calculate Split</Text>
+          <Text style={styles.submitButtonText}>
+            {isSubmitting ? "Calculating..." : "Calculate Split"}
+          </Text>
         </TouchableOpacity>
         <View style={styles.bottomSpacing} />
       </ScrollView>
@@ -141,6 +157,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+  },
+  submitButtonDisabled: {
+    opacity: 0.6
   },
   submitButtonText: {
     color: "#fff",

@@ -43,9 +43,21 @@ export type Receipt = {
 
 export type PersonBreakdown = {
   person: string;
+  itemSubtotal: number;
+  taxShare: number;
+  tipShare: number;
   total: number;
   items: {
+    id: string;
     name: string;
     amount: number;
   }[];
+};
+
+export type CalculateSplitResult = {
+    subtotal: number;
+    tax: number;
+    tip: number;
+    total: number;
+    people: PersonBreakdown[];
 };

@@ -38,7 +38,7 @@ function roundMoney(value: number): number {
 
 export function calculateSplit(input: CalculateSplitInput): CalculateSplitResult {
     if (!Array.isArray(input.items) || input.items.length === 0) {
-        throw new Error("At least one item in required.");
+        throw new Error("At least one item is required.");
     }
 
     if (!Number.isFinite(input.tax) || input.tax < 0) {

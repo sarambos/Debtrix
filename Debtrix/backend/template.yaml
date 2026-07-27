@@ -5,7 +5,7 @@ Description: Debtrix serverless backend
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
-    Runtime: nodejs24.x
+    Runtime: nodejs22.x
     Timeout: 10
     MemorySize: 256
     Architectures:

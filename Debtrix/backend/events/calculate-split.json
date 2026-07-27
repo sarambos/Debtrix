@@ -11,6 +11,6 @@
             "path": "/calculate-split"
         }
     },
-    "body": "{\n    \"amount\": 100,\n    \"splitType\": \"equal\"\n}",
+    "body": "{\"items\":[{\"id\":\"1\",\"name\":\"Pizza\",\"price\":24,\"assignedTo\":[\"Stephanie\",\"Alex\"]},{\"id\":\"2\",\"name\":\"Drink\",\"price\":4,\"assignedTo\":[\"Stephanie\"]}],\"tax\":2.1,\"tip\":5}",
     "isBase64Encoded": false
 }

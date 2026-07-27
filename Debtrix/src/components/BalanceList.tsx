@@ -1,48 +1,92 @@
-import { Text, View, StyleSheet } from 'react-native';
-import { PersonBreakdown, Receipt } from '../types/types';
-import calculateBalances from '../lib/calculateBalances';
+import { Text, View, StyleSheet, ScrollView } from 'react-native';
+import { CalculateSplitResult } from '../types/types';
 
 type Props = {
-    receipt: Receipt;
+    result: CalculateSplitResult | null;
 };
 
-export default function BalanceList({receipt}: Props) { 
-  const result = calculateBalances(receipt);
+export default function BalanceList({ result }: Props) { 
+  if (!result) {
+    return (
+      <View style={styles.centered}>
+        <Text>Split result is unavailable.</Text>
+      </View>
+    );
+  }
 
   return (
-    <View style={styles.container}>
-      {result.map((personData: PersonBreakdown) => (
+    <ScrollView contentContainerStyle={styles.container}>
+      <View style={styles.summaryCard}>
+        <Text style={styles.summaryText}>
+          Subtotal: ${result.subtotal.toFixed(2)}
+        </Text>
+        <Text style={styles.summaryText}>
+          Tax: ${result.tax.toFixed(2)}
+        </Text>
+        <Text style={styles.summaryText}>
+          Tip: ${result.tip.toFixed(2)}
+        </Text>
+        <Text style={styles.summaryText}>
+          Total: ${result.total.toFixed(2)}
+        </Text>
+      </View>
+      {result.people.map((personData) => (
         <View key={personData.person} style={styles.card}>
-          
-          {/* Header */}
           <View style={styles.header}>
             <Text style={styles.person}>{personData.person}</Text>
             <Text style={styles.total}>
               ${personData.total.toFixed(2)}
             </Text>
           </View>
-
-          {/* Item Breakdown */}
-          {personData.items.map((item, index) => (
-            <View key={index} style={styles.itemRow}>
+          {personData.items.map((item) => (
+            <View key={item.id} style={styles.itemRow}>
               <Text style={styles.itemName}>{item.name}</Text>
               <Text style={styles.itemAmount}>
                 ${item.amount.toFixed(2)}
               </Text>
             </View>
           ))}
-
+          <View style={styles.itemRow}>
+            <Text style={styles.itemName}>Tax</Text>
+            <Text style={styles.itemAmount}>
+              ${personData.taxShare.toFixed(2)}
+            </Text>
+          </View>
+          <View style={styles.itemRow}>
+            <Text style={styles.itemName}>Tip</Text>
+            <Text style={styles.itemAmount}>
+              ${personData.tipShare.toFixed(2)}
+            </Text>
+          </View>
         </View>
       ))}
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
     padding: 16,
+  },
+  centered: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  summaryCard: {
+    padding: 16,
+    borderRadius: 12,
+    backgroundColor: '#e8f4f4',
+    marginBottom: 12
+  },
+  summaryText: {
+    fontSize: 15,
+    marginBottom: 4
+  },
+  SummaryTotal: {
+    fontSize: 18,
+    fontWeight: '700',
+    marginTop: 4
   },
   card: {
     backgroundColor: '#3b3f45',
