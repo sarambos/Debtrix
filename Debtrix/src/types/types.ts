@@ -61,3 +61,20 @@ export type CalculateSplitResult = {
     total: number;
     people: PersonBreakdown[];
 };
+
+export type ScannedReceiptItem = {
+  name: string;
+  price: number;
+  confidence?: number;
+};
+
+export type ScannedReceipt = {
+  vendorName?: string;
+  date?: string;
+  subtotal?: number;
+  tax?: number;
+  tip?: number;
+  serviceCharge?: number;
+  total?: number;
+  items: ScannedReceiptItem[];
+};

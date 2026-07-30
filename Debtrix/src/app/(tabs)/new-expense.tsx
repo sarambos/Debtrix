@@ -1,5 +1,5 @@
-import { Text, View, StyleSheet, Alert, ScrollView, TouchableOpacity } from "react-native";
-import { useRouter } from "expo-router";
+import {Text, View, StyleSheet, TextInput, Alert, ScrollView, TouchableOpacity, Modal, FlatList, Image, ActivityIndicator,} from "react-native";
+import { useRouter } from "expo-router"; 
 import React, { useState } from "react";
 import ExpenseDetailsSection from "../../components/newExpense/ExpenseDetailsSection";
 import ItemsSection from "../../components/newExpense/ItemSection";
@@ -10,12 +10,17 @@ import TipSection from "../../components/newExpense/TipSection";
 import { useNewExpenseForm } from "../../hooks/useNewExpenseForm";
 import { buildReceipt, validateNewExpenseForm } from '../../lib/newExpense'
 import { calculateSplitOnAws } from "../../api/debtrixApi";
+import * as ImagePicker from "expo-image-picker";
+import { scanReceiptImage } from "../../api/receiptScanner";
 
 export default function NewExpense() {
   const router = useRouter();
   const form = useNewExpenseForm();
   const [statePickerVisible, setStatePickerVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [receiptImage, setReceiptImage] = useState<ImagePicker.ImagePickerAsset | null>(null);
+
+  const [isScanning, setIsScanning] = useState(false);
 
   const handleSubmit = async () => {
     const formState = form.getFormState();
