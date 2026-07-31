@@ -15,6 +15,14 @@ export type ReceiptItem = {
     assignedTo: string[];
 }
 
+export type CalculateSplitInput = {
+    items: ReceiptItem[];
+    subtotal: number;
+    tax: number;
+    tip: number;
+    total: number;
+}
+
 export type PersonBreakdown = {
   person: string;
   itemSubtotal: number;
@@ -50,4 +58,8 @@ export interface Receipt {
     total: number;
     items: ReceiptItem[];
     people: PersonBreakdown[];
+}
+
+export interface GetReceiptsResponse {
+    receipts: Receipt[];
 }

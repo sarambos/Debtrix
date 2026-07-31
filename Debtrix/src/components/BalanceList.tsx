@@ -1,5 +1,5 @@
 import { Text, View, StyleSheet, ScrollView } from 'react-native';
-import { CalculateSplitResult } from '../types/types';
+import { CalculateSplitResult } from '../types/receipt';
 
 type Props = {
     result: CalculateSplitResult | null;

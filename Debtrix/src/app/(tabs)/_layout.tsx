@@ -32,7 +32,7 @@ export default function TabLayout() {
         options={{ 
           title: 'New Expense',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="add" size={50} color={color} />
+            <Ionicons name="add" size={size} color={color} />
           ),
         }} 
       />

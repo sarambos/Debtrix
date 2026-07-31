@@ -36,7 +36,7 @@ export default function PeopleSection({ numPeople, people, onNumPeopleChange, on
 
                     {people.map((person, index) => (
                         <TextInput
-                            key={index}
+                            key={person.id}
                             style={styles.input}
                             placeholder={`Person ${index + 1} name`}
                             value={person.name}

@@ -1,9 +1,24 @@
 import { STATE_TAX_RATES } from '../data/stateTaxRates';
 import { ExpenseItemInput, NewExpenseFormState, TipOption } from '../types/newExpense';
-import { Receipt, ReceiptItem } from '../types/types';
+import { CalculateSplitInput, ReceiptItem } from '../types/receipt';
 
 export function createId(): string {
     return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+}
+
+export function sanitizeCurrencyInput(value: string): string {
+    const cleaned = value.replace(/,/g, "").replace(/[^\d.]/g, "");
+
+    const firstDecimalIndex = cleaned.indexOf(".");
+
+    if (firstDecimalIndex === -1) {
+        return cleaned;
+    }
+
+    const wholeNumber = cleaned.slice(0, firstDecimalIndex);
+    const decimalPart = cleaned.slice(firstDecimalIndex + 1).replace(/\./g, "").slice(0, 2);
+    
+    return `${wholeNumber || "0"}.${decimalPart}`;
 }
 
 export function parseCurrency(value: string): number {
@@ -103,7 +118,7 @@ export function validateNewExpenseForm(form: NewExpenseFormState): string | null
     return null;
 }
 
-export function buildReceipt(form: NewExpenseFormState): Receipt {
+export function buildReceipt(form: NewExpenseFormState): CalculateSplitInput {
     const subtotal = calculateItemsSubtotal(form.items);
     const taxRate = getTaxRate(form.selectedState);
     const tax = calculateTaxAmount(subtotal, taxRate);

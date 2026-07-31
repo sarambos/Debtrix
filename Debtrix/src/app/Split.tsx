@@ -4,7 +4,7 @@ import BalanceList from '../components/BalanceList';
 import { useLocalSearchParams } from 'expo-router';
 import { useNavigation } from '@react-navigation/native';
 import { useLayoutEffect } from 'react';
-import { CalculateSplitResult } from '../types/types';
+import { CalculateSplitResult } from '../types/receipt';
 
 export default function Split() {
   const { splitResult } = useLocalSearchParams<{ splitResult?: string;}>();

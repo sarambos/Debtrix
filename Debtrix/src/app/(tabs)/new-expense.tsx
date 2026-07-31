@@ -1,4 +1,4 @@
-import { Text, View, StyleSheet, Alert, ScrollView, TouchableOpacity } from "react-native";
+import { Text, View, StyleSheet, Alert, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform } from "react-native";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import ExpenseDetailsSection from "../../components/newExpense/ExpenseDetailsSection";
@@ -33,7 +33,7 @@ export default function NewExpense() {
       const splitResult = await calculateSplitOnAws(receipt);
 
       router.push({
-        pathname: "../GroupScreen",
+        pathname: "../Split",
         params: {
           expenseName: form.expenseName.trim(),
           splitResult: JSON.stringify(splitResult)
@@ -49,7 +49,10 @@ export default function NewExpense() {
   };
 
   return (
-    <>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+    >
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.content}
@@ -121,7 +124,7 @@ export default function NewExpense() {
         }}
         onClose={() => setStatePickerVisible(false)}
       />
-    </>
+    </KeyboardAvoidingView>
   );
 }
 
