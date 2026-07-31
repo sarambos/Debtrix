@@ -9,7 +9,7 @@ export function useNewExpenseForm() {
     const [totalAmount, setTotalAmount] = useState("");
     const [selectedState, setSelectedState] = useState("");
     const [items, setItems] = useState<ExpenseItemInput[]>([]);
-    const [tipOption, setTipOption] = useState<TipOption>(18);
+    const [tipOption, setTipOption] = useState<TipOption>(20);
     const [customTipAmount, setCustomTipAmount] = useState("");
 
     const subtotal = useMemo(() => calculateItemsSubtotal(items), [items]);
@@ -129,6 +129,17 @@ export function useNewExpenseForm() {
         })
     )};
 
+    const resetForm = () => {
+        setNumPeople("");
+        setPeople([]);
+        setExpenseName("");
+        setTotalAmount("");
+        setSelectedState("");
+        setItems([]);
+        setTipOption(20);
+        setCustomTipAmount("");
+    }
+
     const getFormState = (): NewExpenseFormState => ({
         numPeople,
         people,
@@ -166,6 +177,7 @@ export function useNewExpenseForm() {
         toggleAssignedPerson,
         setTipOption,
         setCustomTipAmount: handleCustomTipAmountChange,
-        getFormState
+        getFormState,
+        resetForm
     }
 }

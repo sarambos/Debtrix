@@ -31,11 +31,13 @@ export default function NewExpense() {
 
       const receipt = buildReceipt(formState);
       const splitResult = await calculateSplitOnAws(receipt);
+      const expenseName = form.expenseName.trim();
+      form.resetForm();
 
       router.push({
         pathname: "../Split",
         params: {
-          expenseName: form.expenseName.trim(),
+          expenseName: expenseName,
           splitResult: JSON.stringify(splitResult)
         }
       });
