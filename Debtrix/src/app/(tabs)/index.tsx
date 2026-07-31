@@ -112,7 +112,7 @@ export default function HomeScreen() {
               router.push({
                 pathname: "/receipt/[receiptId]",
                 params: {
-                  receidId: item.receiptId,
+                  receiptId: item.receiptId,
                 },
               })
             }
