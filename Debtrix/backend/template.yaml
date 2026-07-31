@@ -51,6 +51,27 @@ Resources:
         Sourcemap: true
         Target: es2022
 
+  ScanReceiptFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/scan-receipt/
+      Handler: index.handler
+      Timeout: 30
+      Policies:
+        - Statement:
+            - Sid: AnalyzeReceiptWithTextract
+              Effect: Allow
+              Action:
+                - textract:AnalyzeExpense
+              Resource: "*"
+      Events:
+        ScanReceipt:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref DebtrixHttpApi
+            Path: /scan-receipt
+            Method: POST
+
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
   # Find out more about other implicit resources you can reference within SAM
