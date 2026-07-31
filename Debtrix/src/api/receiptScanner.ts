@@ -12,6 +12,39 @@ export async function scanReceiptImage(
     throw new Error("Choose a receipt image before scanning.");
   }
 
+  if (
+    process.env.EXPO_PUBLIC_USE_MOCK_SCANNER === "true"
+  ) {
+    await new Promise((resolve) =>
+      setTimeout(resolve, 1000),
+    );
+
+    return {
+      vendorName: "Pizza Palace",
+      subtotal: 24,
+      tax: 1.84,
+      tip: 3,
+      total: 28.84,
+      items: [
+        {
+          name: "Large Pizza",
+          price: 16,
+          confidence: 98,
+        },
+        {
+          name: "Garlic Knots",
+          price: 5,
+          confidence: 96,
+        },
+        {
+          name: "Soda",
+          price: 3,
+          confidence: 97,
+        },
+      ],
+    };
+  }
+  
   const response = await fetch(
     `${environment.apiURL}/scan-receipt`,
     {

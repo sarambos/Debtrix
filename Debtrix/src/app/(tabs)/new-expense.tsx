@@ -1,5 +1,14 @@
-import {Text, View, StyleSheet, TextInput, Alert, ScrollView, TouchableOpacity, Modal, FlatList, Image, ActivityIndicator,} from "react-native";
-import { useRouter } from "expo-router"; 
+import {
+  ActivityIndicator,
+  Alert,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import ExpenseDetailsSection from "../../components/newExpense/ExpenseDetailsSection";
 import ItemsSection from "../../components/newExpense/ItemSection";
@@ -19,8 +28,60 @@ export default function NewExpense() {
   const [statePickerVisible, setStatePickerVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [receiptImage, setReceiptImage] = useState<ImagePicker.ImagePickerAsset | null>(null);
-
   const [isScanning, setIsScanning] = useState(false);
+
+  const handleScanReceipt = async () => {
+    try {
+      const permission =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+      if (!permission.granted) {
+        Alert.alert(
+          "Photo access needed",
+          "Allow access to your photos to choose a receipt.",
+        );
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ["images"],
+        base64: true,
+        quality: 0.7,
+      });
+
+      if (result.canceled) {
+        return;
+      }
+
+      const image = result.assets[0];
+
+      if (!image?.base64) {
+        throw new Error("The selected image could not be read.");
+      }
+
+      setReceiptImage(image);
+      setIsScanning(true);
+
+      const scannedReceipt = await scanReceiptImage(image.base64);
+      form.applyScannedReceipt(scannedReceipt);
+
+      Alert.alert(
+        "Receipt scanned",
+        scannedReceipt.items.length > 0
+          ? "Review the detected details and assign each item."
+          : "No line items were detected. You can add them manually.",
+      );
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "The receipt could not be scanned.";
+
+      Alert.alert("Unable to scan receipt", message);
+    } finally {
+      setIsScanning(false);
+    }
+  };
 
   const handleSubmit = async () => {
     const formState = form.getFormState();
@@ -62,6 +123,43 @@ export default function NewExpense() {
       >
         <Text style={styles.heading}>New Expense</Text>
         <Text style={styles.description}>Add the participants and receipt items to calculate each person's share.</Text>
+        <View style={styles.scanCard}>
+          <Text style={styles.scanTitle}>Scan a receipt</Text>
+          <Text style={styles.scanDescription}>
+            Choose a clear photo to fill in the merchant, total, tip,
+            and line items automatically.
+          </Text>
+
+          {receiptImage && (
+            <Image
+              source={{ uri: receiptImage.uri }}
+              style={styles.receiptPreview}
+              resizeMode="contain"
+              accessibilityLabel="Selected receipt"
+            />
+          )}
+
+          <TouchableOpacity
+            style={[
+              styles.scanButton,
+              (isScanning || isSubmitting) && styles.scanButtonDisabled,
+            ]}
+            onPress={handleScanReceipt}
+            accessibilityRole="button"
+            disabled={isScanning || isSubmitting}
+          >
+            {isScanning ? (
+              <>
+                <ActivityIndicator color="#fff" />
+                <Text style={styles.scanButtonText}>Scanning...</Text>
+              </>
+            ) : (
+              <Text style={styles.scanButtonText}>
+                {receiptImage ? "Scan another receipt" : "Choose receipt photo"}
+              </Text>
+            )}
+          </TouchableOpacity>
+        </View>
         <PeopleSection 
           numPeople={form.numPeople}
           people={form.people}
@@ -105,10 +203,13 @@ export default function NewExpense() {
           onCustomTipChange={form.setCustomTipAmount}
         />
         <TouchableOpacity
-          style={[styles.submitButton, isSubmitting && styles.submitButtonDisabled]}
+          style={[
+            styles.submitButton,
+            (isSubmitting || isScanning) && styles.submitButtonDisabled,
+          ]}
           onPress={handleSubmit}
           accessibilityRole="button"
-          disabled={isSubmitting}
+          disabled={isSubmitting || isScanning}
         >
           <Text style={styles.submitButtonText}>
             {isSubmitting ? "Calculating..." : "Calculate Split"}
@@ -149,6 +250,55 @@ const styles = StyleSheet.create({
     fontSize: 15,
     lineHeight: 21,
     marginBottom: 20,
+  },
+  scanCard: {
+    backgroundColor: "#d7d9ce",
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 24,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  scanTitle: {
+    color: "#0c7489",
+    fontSize: 16,
+    fontWeight: "700",
+    marginBottom: 6,
+  },
+  scanDescription: {
+    color: "#5f6368",
+    fontSize: 13,
+    lineHeight: 18,
+    marginBottom: 14,
+  },
+  receiptPreview: {
+    width: "100%",
+    height: 180,
+    backgroundColor: "#f4f4ef",
+    borderRadius: 8,
+    marginBottom: 14,
+  },
+  scanButton: {
+    minHeight: 46,
+    backgroundColor: "#0c7489",
+    borderRadius: 8,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
+    gap: 8,
+  },
+  scanButtonDisabled: {
+    opacity: 0.65,
+  },
+  scanButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "700",
   },
   submitButton: {
     backgroundColor: "#13505b",
