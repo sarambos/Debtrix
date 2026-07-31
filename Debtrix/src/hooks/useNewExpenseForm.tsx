@@ -22,6 +22,7 @@ export function useNewExpenseForm() {
   const [expenseName, setExpenseName] = useState("");
   const [totalAmount, setTotalAmount] = useState("");
   const [selectedState, setSelectedState] = useState("");
+  const [scannedTaxAmount, setScannedTaxAmount] = useState<number | null>(null);
   const [items, setItems] = useState<ExpenseItemInput[]>([]);
   const [tipOption, setTipOption] = useState<TipOption>(18);
   const [customTipAmount, setCustomTipAmount] = useState("");
@@ -37,8 +38,10 @@ export function useNewExpenseForm() {
   );
 
   const estimatedTax = useMemo(
-    () => subtotal * (taxRate / 100),
-    [subtotal, taxRate],
+    () =>
+      scannedTaxAmount ??
+      subtotal * (taxRate / 100),
+    [scannedTaxAmount, subtotal, taxRate],
   );
 
   const tipAmount = useMemo(
@@ -199,6 +202,7 @@ export function useNewExpenseForm() {
     expenseName,
     totalAmount,
     selectedState,
+    scannedTaxAmount,
     items,
     tipOption,
     customTipAmount,
@@ -215,6 +219,9 @@ export function useNewExpenseForm() {
       setTotalAmount(
         scannedReceipt.total.toFixed(2),
       );
+      setScannedTaxAmount(
+        scannedReceipt.tax ?? null,
+      );
     }
 
     setItems(
@@ -226,15 +233,20 @@ export function useNewExpenseForm() {
       })),
     );
 
-    const detectedTip =
-      scannedReceipt.tip ??
-      scannedReceipt.serviceCharge;
+    const hasDetectedTip =
+      scannedReceipt.tip !== undefined ||
+      scannedReceipt.serviceCharge !== undefined;
 
-    if (detectedTip !== undefined) {
+    if (hasDetectedTip) {
+      const detectedTip =
+        (scannedReceipt.tip ?? 0) +
+        (scannedReceipt.serviceCharge ?? 0);
+
       setTipOption("custom");
-      setCustomTipAmount(
-        detectedTip.toFixed(2),
-      );
+      setCustomTipAmount(detectedTip.toFixed(2));
+    } else {
+      setTipOption(0);
+      setCustomTipAmount("");
     }
   };
 
@@ -248,6 +260,7 @@ export function useNewExpenseForm() {
     subtotal,
     taxRate,
     estimatedTax,
+    scannedTaxAmount,
     tipOption,
     customTipAmount,
     tipAmount,

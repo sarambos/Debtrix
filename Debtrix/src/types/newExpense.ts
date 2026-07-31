@@ -23,6 +23,7 @@ export type NewExpenseFormState = {
     expenseName: string;
     totalAmount: string;
     selectedState: string;
+    scannedTaxAmount: number | null;
     items: ExpenseItemInput[];
     tipOption: TipOption;
     customTipAmount: string;
