@@ -20,7 +20,7 @@ resolve_s3 = true
 stack_name = "debtrix-backend-dev"
 s3_prefix = "debtrix-backend-dev"
 region = "us-east-1"
-disable_rollback = true
+disable_rollback = false
 image_repositories = []
 
 [default.package.parameters]

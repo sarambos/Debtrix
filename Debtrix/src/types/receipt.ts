@@ -8,24 +8,6 @@ export type Transaction = {
     type: "paid" | "received";
 }
 
-export type TransactionItem = {
-    id: string;
-    name: string;
-    price: number;
-    participants: string[];
-    taxRate?: number;
-}
-
-export type Expense = {
-    id: string;
-    numPeople: number;
-    people: string[];
-    type: string;
-    totalAmount: number;
-    receipt: Receipt;
-    state: string;
-}
-
 export type ReceiptItem = {
     id: string;
     name: string;
@@ -33,7 +15,7 @@ export type ReceiptItem = {
     assignedTo: string[];
 }
 
-export type Receipt = {
+export type CalculateSplitInput = {
     items: ReceiptItem[];
     subtotal: number;
     tax: number;
@@ -61,3 +43,23 @@ export type CalculateSplitResult = {
     total: number;
     people: PersonBreakdown[];
 };
+
+export interface CalculateSplitResponse extends CalculateSplitResult {
+    receiptId: string;
+    createdAt: string;
+}
+
+export interface Receipt {
+    receiptId: string;
+    createdAt: string;
+    subtotal: number;
+    tax: number;
+    tip: number;
+    total: number;
+    items: ReceiptItem[];
+    people: PersonBreakdown[];
+}
+
+export interface GetReceiptsResponse {
+    receipts: Receipt[];
+}

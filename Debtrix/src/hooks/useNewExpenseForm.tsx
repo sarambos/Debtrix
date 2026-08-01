@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { ExpenseItemInput, NewExpenseFormState, PersonInput, TipOption } from '../types/newExpense';
-import { calculateItemsSubtotal, calculateTipAmount, createId, getTaxRate } from '../lib/newExpense';
+import { calculateItemsSubtotal, calculateTipAmount, createId, getTaxRate, sanitizeCurrencyInput } from '../lib/newExpense';
 
 export function useNewExpenseForm() {
     const [numPeople, setNumPeople] = useState("");
@@ -9,7 +9,7 @@ export function useNewExpenseForm() {
     const [totalAmount, setTotalAmount] = useState("");
     const [selectedState, setSelectedState] = useState("");
     const [items, setItems] = useState<ExpenseItemInput[]>([]);
-    const [tipOption, setTipOption] = useState<TipOption>(18);
+    const [tipOption, setTipOption] = useState<TipOption>(20);
     const [customTipAmount, setCustomTipAmount] = useState("");
 
     const subtotal = useMemo(() => calculateItemsSubtotal(items), [items]);
@@ -18,6 +18,14 @@ export function useNewExpenseForm() {
     const tipAmount = useMemo(() => calculateTipAmount(subtotal, tipOption, customTipAmount), [subtotal, tipOption, customTipAmount]);
 
     const estimatedTotal = subtotal + estimatedTax + tipAmount;
+
+    const handleTotalAmountChange = (value: string) => {
+        setTotalAmount(sanitizeCurrencyInput(value));
+    };
+
+    const handleCustomTipAmountChange = (value: string) => {
+        setCustomTipAmount(sanitizeCurrencyInput(value));
+    };
 
     const handleNumPeopleChange = (value: string) => {
         const digits = value.replace(/\D/g, "");
@@ -83,9 +91,13 @@ export function useNewExpenseForm() {
     };
 
     const updateItem = (itemId: string, field: "name" | "price", value: string) => {
+        const nextValue = field === "price"
+            ? sanitizeCurrencyInput(value)
+            : value;
+        
         setItems((currentItems) => 
             currentItems.map((item) =>
-             item.id === itemId ? { ...item, [field]: value } : item
+             item.id === itemId ? { ...item, [field]: nextValue } : item
             )
         );
     };
@@ -117,6 +129,17 @@ export function useNewExpenseForm() {
         })
     )};
 
+    const resetForm = () => {
+        setNumPeople("");
+        setPeople([]);
+        setExpenseName("");
+        setTotalAmount("");
+        setSelectedState("");
+        setItems([]);
+        setTipOption(20);
+        setCustomTipAmount("");
+    }
+
     const getFormState = (): NewExpenseFormState => ({
         numPeople,
         people,
@@ -144,7 +167,7 @@ export function useNewExpenseForm() {
         estimatedTotal,
 
         setExpenseName,
-        setTotalAmount,
+        setTotalAmount: handleTotalAmountChange,
         setSelectedState,
         handleNumPeopleChange,
         updatePersonName,
@@ -153,7 +176,8 @@ export function useNewExpenseForm() {
         removeItem,
         toggleAssignedPerson,
         setTipOption,
-        setCustomTipAmount,
-        getFormState
+        setCustomTipAmount: handleCustomTipAmountChange,
+        getFormState,
+        resetForm
     }
 }

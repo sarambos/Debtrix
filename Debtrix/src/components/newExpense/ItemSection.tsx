@@ -61,7 +61,7 @@ export default function ItemSection({ items, people, subtotal, estimatedTax, tip
             <TextInput
               style={[styles.input, styles.priceInput]}
               placeholder="$0.00"
-              keyboardType="decimal-pad"
+              selectTextOnFocus={false}
               value={item.price}
               onChangeText={(value) =>
                 onUpdateItem(item.id, "price", value)
