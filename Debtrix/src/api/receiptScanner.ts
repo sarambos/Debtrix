@@ -1,5 +1,5 @@
 import { environment } from "../config/environment";
-import type { ScannedReceipt } from "../types/types";
+import type { ScannedReceipt } from "../types/receipt";
 
 type ApiErrorBody = {
   message?: string;

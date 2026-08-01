@@ -12,9 +12,10 @@ import {
   calculateTipAmount,
   createId,
   getTaxRate,
+  sanitizeCurrencyInput,
 } from "../lib/newExpense";
 
-import type { ScannedReceipt } from "../types/types";
+import type { ScannedReceipt } from "../types/receipt";
 
 export function useNewExpenseForm() {
   const [numPeople, setNumPeople] = useState("");
@@ -22,9 +23,10 @@ export function useNewExpenseForm() {
   const [expenseName, setExpenseName] = useState("");
   const [totalAmount, setTotalAmount] = useState("");
   const [selectedState, setSelectedState] = useState("");
-  const [scannedTaxAmount, setScannedTaxAmount] = useState<number | null>(null);
+  const [scannedTaxAmount, setScannedTaxAmount] =
+    useState<number | null>(null);
   const [items, setItems] = useState<ExpenseItemInput[]>([]);
-  const [tipOption, setTipOption] = useState<TipOption>(18);
+  const [tipOption, setTipOption] = useState<TipOption>(20);
   const [customTipAmount, setCustomTipAmount] = useState("");
 
   const subtotal = useMemo(
@@ -56,6 +58,14 @@ export function useNewExpenseForm() {
 
   const estimatedTotal =
     subtotal + estimatedTax + tipAmount;
+
+  const handleTotalAmountChange = (value: string) => {
+    setTotalAmount(sanitizeCurrencyInput(value));
+  };
+
+  const handleCustomTipAmountChange = (value: string) => {
+    setCustomTipAmount(sanitizeCurrencyInput(value));
+  };
 
   const handleNumPeopleChange = (value: string) => {
     const digits = value.replace(/\D/g, "");
@@ -147,12 +157,17 @@ export function useNewExpenseForm() {
     field: "name" | "price",
     value: string,
   ) => {
+    const nextValue =
+      field === "price"
+        ? sanitizeCurrencyInput(value)
+        : value;
+
     setItems((currentItems) =>
       currentItems.map((item) =>
         item.id === itemId
           ? {
               ...item,
-              [field]: value,
+              [field]: nextValue,
             }
           : item,
       ),
@@ -196,18 +211,6 @@ export function useNewExpenseForm() {
     );
   };
 
-  const getFormState = (): NewExpenseFormState => ({
-    numPeople,
-    people,
-    expenseName,
-    totalAmount,
-    selectedState,
-    scannedTaxAmount,
-    items,
-    tipOption,
-    customTipAmount,
-  });
-
   const applyScannedReceipt = (
     scannedReceipt: ScannedReceipt,
   ) => {
@@ -216,13 +219,10 @@ export function useNewExpenseForm() {
     }
 
     if (scannedReceipt.total !== undefined) {
-      setTotalAmount(
-        scannedReceipt.total.toFixed(2),
-      );
-      setScannedTaxAmount(
-        scannedReceipt.tax ?? null,
-      );
+      setTotalAmount(scannedReceipt.total.toFixed(2));
     }
+
+    setScannedTaxAmount(scannedReceipt.tax ?? null);
 
     setItems(
       scannedReceipt.items.map((item) => ({
@@ -250,6 +250,30 @@ export function useNewExpenseForm() {
     }
   };
 
+  const resetForm = () => {
+    setNumPeople("");
+    setPeople([]);
+    setExpenseName("");
+    setTotalAmount("");
+    setSelectedState("");
+    setScannedTaxAmount(null);
+    setItems([]);
+    setTipOption(20);
+    setCustomTipAmount("");
+  };
+
+  const getFormState = (): NewExpenseFormState => ({
+    numPeople,
+    people,
+    expenseName,
+    totalAmount,
+    selectedState,
+    scannedTaxAmount,
+    items,
+    tipOption,
+    customTipAmount,
+  });
+
   return {
     numPeople,
     people,
@@ -267,10 +291,10 @@ export function useNewExpenseForm() {
     estimatedTotal,
 
     setExpenseName,
-    setTotalAmount,
+    setTotalAmount: handleTotalAmountChange,
     setSelectedState,
     setTipOption,
-    setCustomTipAmount,
+    setCustomTipAmount: handleCustomTipAmountChange,
 
     handleNumPeopleChange,
     updatePersonName,
@@ -278,7 +302,8 @@ export function useNewExpenseForm() {
     updateItem,
     removeItem,
     toggleAssignedPerson,
-    getFormState,
     applyScannedReceipt,
+    resetForm,
+    getFormState,
   };
 }

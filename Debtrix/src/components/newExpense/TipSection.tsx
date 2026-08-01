@@ -48,7 +48,7 @@ export default function TipSection({ selectedOption, customTipAmount, calculated
                     placeholder="$0.00"
                     value={customTipAmount}
                     onChangeText={onCustomTipChange}
-                    keyboardType="decimal-pad"
+                    selectTextOnFocus={false}
                 />
             )}
             <View style={styles.tipSummary}>

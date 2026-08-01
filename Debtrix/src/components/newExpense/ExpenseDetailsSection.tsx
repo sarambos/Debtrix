@@ -28,7 +28,7 @@ export default function ExpenseDetailsSection({ expenseName, totalAmount, onExpe
             <TextInput
                 style={styles.input}
                 placeholder="$0.00"
-                keyboardType="decimal-pad"
+                selectTextOnFocus={false}
                 value={totalAmount}
                 onChangeText={onTotalAmountChange}
             />
