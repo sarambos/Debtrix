@@ -22,6 +22,7 @@ export default function ExpenseDetailsSection({ expenseName, totalAmount, onExpe
             <TextInput
                 style={styles.input}
                 placeholder="e.g., Dinner at Pizza Place"
+                placeholderTextColor={theme.textSecondary}
                 value={expenseName}
                 onChangeText={onExpenseNameChange}
                 autoCapitalize="words"
@@ -33,6 +34,7 @@ export default function ExpenseDetailsSection({ expenseName, totalAmount, onExpe
             <TextInput
                 style={styles.input}
                 placeholder="$0.00"
+                placeholderTextColor={theme.textSecondary}
                 selectTextOnFocus={false}
                 value={totalAmount}
                 onChangeText={onTotalAmountChange}

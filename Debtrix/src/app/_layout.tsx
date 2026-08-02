@@ -1,38 +1,42 @@
 import { Stack } from "expo-router";
 import { ThemeProvider, useThemeContext } from "../theme/themeContext";
 
-export default function RootLayout() {
+function RootNavigator() {
   const { theme } = useThemeContext();
 
   return (
-    <ThemeProvider>
-      <Stack
-        screenOptions={{
-          headerStyle: {
-            backgroundColor: theme.surface,
-          },
-          headerTitleStyle: {
-            fontWeight: "bold",
-            color: theme.primary,
-          },
-          headerTitleAlign: "center",
-          contentStyle: {
-            backgroundColor: theme.background,
-          }
+    <Stack
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: theme.surface,
+        },
+        headerTitleStyle: {
+          fontWeight: "bold",
+          color: theme.primary,
+        },
+        headerTitleAlign: "center",
+        contentStyle: {
+          backgroundColor: theme.background,
+        },
+      }}
+    >
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen
+        name="receipt/[receiptId]"
+        options={{
+          title: "Receipt Details",
+          headerBackTitle: "Home",
+          headerTintColor: theme.primary,
         }}
-      >
-        <Stack.Screen 
-          name="(tabs)" 
-          options={{ headerShown: false }} 
-        />
-        <Stack.Screen
-          name="receipt/[receiptId]"
-          options={{
-            title: "Receipt Details",
-            headerBackTitle: "Home"
-          }}
-        />
-      </Stack>
+      />
+    </Stack>
+  );
+}
+
+export default function RootLayout() {
+  return (
+    <ThemeProvider>
+      <RootNavigator />
     </ThemeProvider>
   );
 }

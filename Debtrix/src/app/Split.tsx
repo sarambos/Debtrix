@@ -36,7 +36,7 @@ export default function Split() {
                 <Ionicons
                   name="chevron-back"
                   size={26}
-                  color="#0c7489"
+                  color={theme.primaryDark}
                 />
               </Pressable>
             )
@@ -72,11 +72,12 @@ export default function Split() {
 const getStyles = (theme: AppTheme) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: theme.surface,
     justifyContent: 'center',
   },
   backButton: {
     paddingHorizontal: 8,
     paddingVertical: 4,
+    color: theme.textSecondary
   }
 });

@@ -25,6 +25,7 @@ export default function PeopleSection({ numPeople, people, onNumPeopleChange, on
                 <TextInput
                     style={styles.input}
                     placeholder="Enter number of people"
+                    placeholderTextColor={theme.textMuted}
                     keyboardType="number-pad"
                     value={numPeople}
                     onChangeText={onNumPeopleChange}
@@ -44,6 +45,7 @@ export default function PeopleSection({ numPeople, people, onNumPeopleChange, on
                             key={person.id}
                             style={styles.input}
                             placeholder={`Person ${index + 1} name`}
+                            placeholderTextColor={theme.textMuted}
                             value={person.name}
                             onChangeText={(value) => onPersonNameChange(person.id, value)}
                             autoCapitalize="words"
@@ -58,31 +60,32 @@ export default function PeopleSection({ numPeople, people, onNumPeopleChange, on
 const getStyles = (theme: AppTheme) => StyleSheet.create({
   section: {
     marginBottom: 24,
-    backgroundColor: "#d7d9ce",
+    backgroundColor: theme.surface,
     borderRadius: 12,
     padding: 16,
-    shadowColor: "#000",
+    shadowColor: theme.shadow,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
     elevation: 2,
   },
   label: {
-    color: "#0c7489",
+    color: theme.primary,
     fontSize: 16,
     fontWeight: "600",
     marginBottom: 8,
   },
   required: {
-    color: "#ff3b30",
+    color: theme.danger,
   },
   input: {
-    backgroundColor: "#d7d9ce",
+    backgroundColor: theme.surfaceSecondary,
     borderWidth: 1,
-    borderColor: "#808080",
+    borderColor: theme.border,
     borderRadius: 8,
     padding: 12,
     marginBottom: 12,
     fontSize: 16,
+    color: theme.text
   },
 });

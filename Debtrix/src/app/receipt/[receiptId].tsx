@@ -246,7 +246,7 @@ const getStyles = (theme: AppTheme) =>
         alignItems: "center",
         justifyContent: "center",
         padding: 24,
-        backgroundColor: theme.background,
+        backgroundColor: theme.surface,
         },
 
         statusText: {

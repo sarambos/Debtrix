@@ -264,7 +264,7 @@ const getStyles = (theme: AppTheme) =>
     chevron: {
       fontSize: 20,
       fontWeight: "700",
-      color: theme.textSecondary,
+      color: theme.primaryDark,
     },
   });
 

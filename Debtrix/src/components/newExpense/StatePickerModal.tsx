@@ -60,6 +60,7 @@ export default function StatePickerModal({ visible, selectedState, onSelect, onC
             <TextInput
               style={styles.searchInput}
               placeholder="Search for a state..."
+              placeholderTextColor={theme.textMuted}
               value={searchQuery}
               onChangeText={setSearchQuery}
               autoFocus
@@ -118,11 +119,11 @@ export default function StatePickerModal({ visible, selectedState, onSelect, onC
 const getStyles = (theme: AppTheme) => StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: theme.primaryDark,
     justifyContent: "flex-end",
   },
   content: {
-    backgroundColor: "#119da4",
+    backgroundColor: theme.surface,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     maxHeight: "80%",
@@ -134,15 +135,15 @@ const getStyles = (theme: AppTheme) => StyleSheet.create({
     alignItems: "center",
     padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: "rgba(255, 255, 255, 0.3)",
+    borderBottomColor: theme.border,
   },
   title: {
-    color: "#fff",
+    color: theme.text,
     fontSize: 20,
     fontWeight: "700",
   },
   close: {
-    color: "#fff",
+    color: theme.danger,
     fontSize: 24,
     padding: 5,
   },
@@ -154,15 +155,16 @@ const getStyles = (theme: AppTheme) => StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    backgroundColor: "#f4f4ef",
+    backgroundColor: theme.surfaceSecondary,
     padding: 12,
     borderRadius: 10,
     fontSize: 16,
     borderWidth: 1,
-    borderColor: "#d0d0ca",
+    borderColor: theme.border,
+    color: theme.text
   },
   clearSearch: {
-    color: "#fff",
+    color: theme.danger,
     fontSize: 18,
     padding: 10,
     marginLeft: 5,
@@ -177,25 +179,25 @@ const getStyles = (theme: AppTheme) => StyleSheet.create({
     alignItems: "center",
     padding: 15,
     marginBottom: 8,
-    backgroundColor: "#d7d9ce",
+    backgroundColor: theme.primary,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: "#e0e0e0",
+    borderColor: theme.border,
   },
   selectedStateItem: {
-    backgroundColor: "#13505b",
-    borderColor: "#13505b",
+    backgroundColor: theme.primaryDark,
+    borderColor: theme.primary,
   },
   stateName: {
-    color: "#333",
+    color: theme.text,
     fontSize: 16,
   },
   stateTax: {
-    color: "#666",
+    color: theme.text,
     fontSize: 14,
   },
   selectedStateText: {
-    color: "#fff",
+    color: theme.text,
     fontWeight: "600",
   },
   emptyContainer: {
@@ -203,7 +205,7 @@ const getStyles = (theme: AppTheme) => StyleSheet.create({
     alignItems: "center",
   },
   emptyText: {
-    color: "#fff",
+    color: theme.text,
     fontSize: 16,
   },
 });

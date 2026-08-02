@@ -50,7 +50,7 @@ export default function ItemSection({ items, people, subtotal, estimatedTax, tip
               <MaterialCommunityIcons
                 name="delete-outline"
                 size={24}
-                color="#c62828"
+                color={theme.danger}
               />
             </TouchableOpacity>
           </View>
@@ -58,6 +58,7 @@ export default function ItemSection({ items, people, subtotal, estimatedTax, tip
             <TextInput
               style={[styles.input, styles.nameInput]}
               placeholder="Item name"
+              placeholderTextColor={theme.textMuted}
               value={item.name}
               onChangeText={(value) =>
                 onUpdateItem(item.id, "name", value)
@@ -66,6 +67,7 @@ export default function ItemSection({ items, people, subtotal, estimatedTax, tip
             <TextInput
               style={[styles.input, styles.priceInput]}
               placeholder="$0.00"
+              placeholderTextColor={theme.textMuted}
               selectTextOnFocus={false}
               value={item.price}
               onChangeText={(value) =>
@@ -124,7 +126,7 @@ export default function ItemSection({ items, people, subtotal, estimatedTax, tip
         <MaterialCommunityIcons
           name="plus"
           size={21}
-          color="#fff"
+          color={theme.textInverse}
         />
         <Text style={styles.addButtonText}>Add item</Text>
       </TouchableOpacity>
@@ -164,30 +166,31 @@ function SummaryRow({ label, amount, emphasized = false}: SummaryRowProps) {
 const getStyles = (theme: AppTheme) => StyleSheet.create({
   section: {
     marginBottom: 24,
-    backgroundColor: "#d7d9ce",
+    backgroundColor: theme.surface,
     borderRadius: 12,
     padding: 16,
-    shadowColor: "#000",
+    shadowColor: theme.shadow,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
     elevation: 2,
   },
   label: {
-    color: "#0c7489",
+    color: theme.primary,
     fontSize: 16,
     fontWeight: "600",
     marginBottom: 6,
   },
   helperText: {
-    color: "#5f6368",
+    color: theme.textSecondary,
     fontSize: 13,
     lineHeight: 18,
     marginBottom: 14,
   },
   itemCard: {
+    backgroundColor: theme.surfaceSecondary,
     borderWidth: 1,
-    borderColor: "#b3b5ae",
+    borderColor: theme.border,
     borderRadius: 10,
     padding: 12,
     marginBottom: 14,
@@ -199,7 +202,7 @@ const getStyles = (theme: AppTheme) => StyleSheet.create({
     marginBottom: 10,
   },
   itemTitle: {
-    color: "#13505b",
+    color: theme.primary,
     fontSize: 15,
     fontWeight: "700",
   },
@@ -208,28 +211,31 @@ const getStyles = (theme: AppTheme) => StyleSheet.create({
     gap: 8,
   },
   input: {
-    backgroundColor: "#f4f4ef",
+    backgroundColor: theme.surface,
     borderWidth: 1,
-    borderColor: "#808080",
+    borderColor: theme.border,
     borderRadius: 8,
     padding: 12,
     marginBottom: 12,
     fontSize: 16,
+    color: theme.text
   },
   nameInput: {
     flex: 2,
+    color: theme.text
   },
   priceInput: {
     flex: 1,
+    color: theme.text
   },
   assignmentLabel: {
-    color: "#13505b",
+    color: theme.primaryDark,
     fontSize: 14,
     fontWeight: "600",
     marginBottom: 6,
   },
   emptyText: {
-    color: "#666",
+    color: theme.textSecondary,
     fontSize: 13,
   },
   chips: {
@@ -237,7 +243,7 @@ const getStyles = (theme: AppTheme) => StyleSheet.create({
     flexWrap: "wrap",
   },
   chip: {
-    backgroundColor: "#e5e5e0",
+    backgroundColor: theme.chip,
     borderRadius: 20,
     paddingHorizontal: 11,
     paddingVertical: 7,
@@ -245,20 +251,20 @@ const getStyles = (theme: AppTheme) => StyleSheet.create({
     marginBottom: 7,
   },
   selectedChip: {
-    backgroundColor: "#0c7489",
+    backgroundColor: theme.primaryDark,
   },
   disabledChip: {
     opacity: 0.45,
   },
   chipText: {
-    color: "#333",
+    color: theme.textMuted,
   },
   selectedChipText: {
-    color: "#fff",
+    color: theme.text,
     fontWeight: "600",
   },
   addButton: {
-    backgroundColor: "#13505b",
+    backgroundColor: theme.primaryDark,
     borderRadius: 8,
     padding: 12,
     alignItems: "center",
@@ -267,13 +273,13 @@ const getStyles = (theme: AppTheme) => StyleSheet.create({
     gap: 5,
   },
   addButtonText: {
-    color: "#fff",
+    color: theme.textInverse,
     fontSize: 16,
     fontWeight: "700",
   },
   summary: {
     marginTop: 16,
-    backgroundColor: "#f4f4ef",
+    backgroundColor: theme.surfaceSecondary,
     borderRadius: 10,
     padding: 12,
   },
@@ -283,19 +289,19 @@ const getStyles = (theme: AppTheme) => StyleSheet.create({
     paddingVertical: 4,
   },
   summaryLabel: {
-    color: "#444",
+    color: theme.primary,
   },
   summaryAmount: {
-    color: "#444",
+    color: theme.primary,
     fontVariant: ["tabular-nums"],
   },
   summaryDivider: {
     borderTopWidth: 1,
-    borderTopColor: "#c4c4be",
+    borderTopColor: theme.border,
     marginVertical: 6,
   },
   emphasizedText: {
-    color: "#13505b",
+    color: theme.primaryDark,
     fontWeight: "700",
   },
 });

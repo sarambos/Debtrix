@@ -72,29 +72,32 @@ export default function BalanceList({ result }: Props) {
 const getStyles = (theme: AppTheme) => StyleSheet.create({
   container: {
     padding: 16,
+    backgroundColor: theme.surface,
   },
   centered: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    backgroundColor: theme.surface,
   },
   summaryCard: {
     padding: 16,
     borderRadius: 12,
-    backgroundColor: '#e8f4f4',
+    backgroundColor: theme.surfaceSecondary,
     marginBottom: 12
   },
   summaryText: {
     fontSize: 15,
-    marginBottom: 4
+    marginBottom: 4,
+    color: theme.primaryDark
   },
-  SummaryTotal: {
+  summaryTotal: {
     fontSize: 18,
     fontWeight: '700',
     marginTop: 4
   },
   card: {
-    backgroundColor: '#3b3f45',
+    backgroundColor: theme.surfaceSecondary,
     width: '100%',
     padding: 14,
     marginVertical: 8,
@@ -104,14 +107,15 @@ const getStyles = (theme: AppTheme) => StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 8,
+    backgroundColor: theme.surfaceSecondary,
   },
   person: {
-    color: '#fff',
+    color: theme.primary,
     fontSize: 18,
     fontWeight: 'bold',
   },
   total: {
-    color: '#00ff94',
+    color: theme.success,
     fontSize: 18,
     fontWeight: 'bold',
   },
@@ -121,11 +125,11 @@ const getStyles = (theme: AppTheme) => StyleSheet.create({
     paddingVertical: 2,
   },
   itemName: {
-    color: '#ccc',
+    color: theme.textSecondary,
     fontSize: 14,
   },
   itemAmount: {
-    color: '#ccc',
+    color: theme.textSecondary,
     fontSize: 14,
   },
 });
