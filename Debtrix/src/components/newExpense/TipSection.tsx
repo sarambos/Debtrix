@@ -1,6 +1,8 @@
 import React from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { TipOption } from '../../types/newExpense';
+import { useThemeContext } from '../../theme/themeContext';
+import { AppTheme } from '../../theme/colors';
 
 type Props = {
     selectedOption: TipOption;
@@ -13,6 +15,9 @@ type Props = {
 const TIP_OPTIONS: TipOption[] = [0, 10, 15, 18, 20, "custom"];
 
 export default function TipSection({ selectedOption, customTipAmount, calculatedTip, onOptionChange, onCustomTipChange }: Props) {
+    const { theme } = useThemeContext();
+    const styles = getStyles(theme);
+    
     const getLabel = (option: TipOption) => {
         if (option === 0) return "No Tip";
         if (option === "custom") return "Custom";
@@ -59,7 +64,7 @@ export default function TipSection({ selectedOption, customTipAmount, calculated
     );
 }
 
-const styles = StyleSheet.create({ 
+const getStyles = (theme: AppTheme) => StyleSheet.create({ 
     section: { 
         marginBottom: 24, 
         backgroundColor: "#d7d9ce", 

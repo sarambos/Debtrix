@@ -1,6 +1,8 @@
 import React from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 import { PersonInput } from '../../types/newExpense';
+import { AppTheme } from '../../theme/colors';
+import { useThemeContext } from '../../theme/themeContext';
 
 type Props = {
     numPeople: string;
@@ -10,6 +12,9 @@ type Props = {
 };
 
 export default function PeopleSection({ numPeople, people, onNumPeopleChange, onPersonNameChange }: Props) {
+    const { theme } = useThemeContext();
+    const styles = getStyles(theme);
+
     return (
         <>
             <View>
@@ -50,7 +55,7 @@ export default function PeopleSection({ numPeople, people, onNumPeopleChange, on
     );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (theme: AppTheme) => StyleSheet.create({
   section: {
     marginBottom: 24,
     backgroundColor: "#d7d9ce",

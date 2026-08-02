@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
 import { FlatList, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { STATE_TAX_RATES } from '../../data/stateTaxRates';
+import { AppTheme } from "../../theme/colors";
+import { useThemeContext } from "../../theme/themeContext";
 
 type Props = {
   visible: boolean;
@@ -10,6 +12,9 @@ type Props = {
 };
 
 export default function StatePickerModal({ visible, selectedState, onSelect, onClose }: Props) {
+  const { theme } = useThemeContext();
+  const styles = getStyles(theme);
+  
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredStates = useMemo(() => {
@@ -110,7 +115,7 @@ export default function StatePickerModal({ visible, selectedState, onSelect, onC
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (theme: AppTheme) => StyleSheet.create({
   overlay: {
     flex: 1,
     backgroundColor: "rgba(0, 0, 0, 0.5)",

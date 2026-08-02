@@ -1,11 +1,16 @@
 import { Text, View, StyleSheet, ScrollView } from 'react-native';
 import { CalculateSplitResult } from '../types/receipt';
+import { useThemeContext } from '../theme/themeContext';
+import { AppTheme } from '../theme/colors';
 
 type Props = {
     result: CalculateSplitResult | null;
 };
 
 export default function BalanceList({ result }: Props) { 
+  const { theme } = useThemeContext();
+  const styles = getStyles(theme);
+  
   if (!result) {
     return (
       <View style={styles.centered}>
@@ -64,7 +69,7 @@ export default function BalanceList({ result }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (theme: AppTheme) => StyleSheet.create({
   container: {
     padding: 16,
   },

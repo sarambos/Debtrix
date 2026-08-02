@@ -2,6 +2,8 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import React from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { ExpenseItemInput, PersonInput } from '../../types/newExpense';
+import { AppTheme } from '../../theme/colors';
+import { useThemeContext } from '../../theme/themeContext';
 
 type Props = {
     items: ExpenseItemInput[];
@@ -24,6 +26,9 @@ type Props = {
 };
 
 export default function ItemSection({ items, people, subtotal, estimatedTax, tipAmount, estimatedTotal, onAddItem, onUpdateItem, onRemoveItem, onToggleAssignedPerson}: Props) {
+  const { theme } = useThemeContext();
+  const styles = getStyles(theme);
+
   return (
     <View style={styles.section}>
       <Text style={styles.label}>Receipt items</Text>
@@ -141,6 +146,9 @@ type SummaryRowProps = {
 };
 
 function SummaryRow({ label, amount, emphasized = false}: SummaryRowProps) {
+  const { theme } = useThemeContext();
+  const styles = getStyles(theme);
+  
   return (
     <View style={styles.summaryRow}>
       <Text style={[styles.summaryLabel, emphasized && styles.emphasizedText]}>
@@ -153,7 +161,7 @@ function SummaryRow({ label, amount, emphasized = false}: SummaryRowProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (theme: AppTheme) => StyleSheet.create({
   section: {
     marginBottom: 24,
     backgroundColor: "#d7d9ce",

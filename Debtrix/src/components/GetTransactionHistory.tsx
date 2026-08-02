@@ -1,6 +1,8 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, FlatList } from 'react-native';
 import { Transaction } from '../types/receipt';
+import { useThemeContext } from '../theme/themeContext';
+import { AppTheme } from '../theme/colors';
 
 type Props = {
     transactions: Transaction[];
@@ -16,6 +18,9 @@ const getPaymentText = (item: Transaction, currentUser: string) => {
 }
 
 export default function GetTransactionHistory({ transactions }: Props) {
+    const { theme } = useThemeContext();
+    const styles = getStyles(theme);
+    
     const renderItem = ({ item }: { item: Transaction }) => (
         <View style={styles.card}>
             <Text style={styles.title}>{item.title}</Text>
@@ -38,7 +43,7 @@ export default function GetTransactionHistory({ transactions }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (theme: AppTheme) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',

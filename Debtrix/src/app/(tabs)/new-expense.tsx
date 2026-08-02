@@ -10,12 +10,16 @@ import TipSection from "../../components/newExpense/TipSection";
 import { useNewExpenseForm } from "../../hooks/useNewExpenseForm";
 import { buildReceipt, validateNewExpenseForm } from '../../lib/newExpense'
 import { calculateSplitOnAws } from "../../api/debtrixApi";
+import { AppTheme } from "../../theme/colors";
+import { useThemeContext } from "../../theme/themeContext";
 
 export default function NewExpense() {
   const router = useRouter();
   const form = useNewExpenseForm();
   const [statePickerVisible, setStatePickerVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { theme } = useThemeContext();
+  const styles = getStyles(theme);
 
   const handleSubmit = async () => {
     const formState = form.getFormState();
@@ -130,7 +134,8 @@ export default function NewExpense() {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (theme: AppTheme) =>
+  StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#119da4",
@@ -164,7 +169,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   submitButtonDisabled: {
-    opacity: 0.6
+    opacity: 0.6,
   },
   submitButtonText: {
     color: "#fff",

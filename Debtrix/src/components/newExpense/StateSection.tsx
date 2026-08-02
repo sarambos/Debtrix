@@ -1,5 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { AppTheme } from '../../theme/colors';
+import { useThemeContext } from '../../theme/themeContext';
 
 type Props = {
     selectedState: string;
@@ -8,6 +10,9 @@ type Props = {
 };
 
 export default function StateSection({ selectedState, taxRate, onOpenPicker }: Props) {
+    const { theme } = useThemeContext();
+    const styles = getStyles(theme);
+
     return (
         <View style={styles.section}>
             <Text style={styles.label}>
@@ -39,7 +44,7 @@ export default function StateSection({ selectedState, taxRate, onOpenPicker }: P
     );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (theme: AppTheme) => StyleSheet.create({
   section: {
     marginBottom: 24,
     backgroundColor: "#d7d9ce",
