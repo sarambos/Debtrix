@@ -10,12 +10,16 @@ import TipSection from "../../components/newExpense/TipSection";
 import { useNewExpenseForm } from "../../hooks/useNewExpenseForm";
 import { buildReceipt, validateNewExpenseForm } from '../../lib/newExpense'
 import { calculateSplitOnAws } from "../../api/debtrixApi";
+import { AppTheme } from "../../theme/colors";
+import { useThemeContext } from "../../theme/themeContext";
 
 export default function NewExpense() {
   const router = useRouter();
   const form = useNewExpenseForm();
   const [statePickerVisible, setStatePickerVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { theme } = useThemeContext();
+  const styles = getStyles(theme);
 
   const handleSubmit = async () => {
     const formState = form.getFormState();
@@ -130,44 +134,45 @@ export default function NewExpense() {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (theme: AppTheme) =>
+  StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#119da4",
+    backgroundColor: theme.background,
   },
   content: {
     padding: 20,
   },
   heading: {
-    color: "#fff",
+    color: theme.primary,
     fontSize: 28,
     fontWeight: "800",
     marginBottom: 6,
   },
   description: {
-    color: "rgba(255, 255, 255, 0.9)",
+    color: theme.textSecondary,
     fontSize: 15,
     lineHeight: 21,
     marginBottom: 20,
   },
   submitButton: {
-    backgroundColor: "#13505b",
+    backgroundColor: theme.primaryDark,
     borderRadius: 12,
     padding: 16,
     alignItems: "center",
     marginTop: 2,
     marginBottom: 20,
-    shadowColor: "#000",
+    shadowColor: theme.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
   },
   submitButtonDisabled: {
-    opacity: 0.6
+    opacity: 0.6,
   },
   submitButtonText: {
-    color: "#fff",
+    color: theme.primary,
     fontSize: 18,
     fontWeight: "700",
   },

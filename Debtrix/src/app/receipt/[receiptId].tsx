@@ -3,6 +3,8 @@ import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { getReceipts } from '../../api/debtrixApi';
 import type { Receipt } from '../../types/receipt';
+import { AppTheme } from "../../theme/colors";
+import { useThemeContext } from "../../theme/themeContext";
 
 const currencyFormatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -16,6 +18,9 @@ export default function ReceiptDetailsScreen() {
     const [receipt, setReceipt] = useState<Receipt | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+    const { theme } = useThemeContext();
+    const styles = getStyles(theme);
 
     const loadReceipt = useCallback(async () => {
         if (!receiptId) {
@@ -199,6 +204,9 @@ interface SummaryRowProps {
 }
 
 function SummaryRow({ label, amount, emphasized = false }: SummaryRowProps) {
+    const { theme } = useThemeContext();
+    const styles = getStyles(theme);
+
     return (
         <View style={styles.summaryRow}>
             <Text
@@ -221,130 +229,168 @@ function SummaryRow({ label, amount, emphasized = false }: SummaryRowProps) {
     );
 }
 
-const styles = StyleSheet.create({
-    container: {
+const getStyles = (theme: AppTheme) =>
+    StyleSheet.create({
+        container: {
         flex: 1,
-        backgroundColor: "#f7f7f7"
-    },
-    contentContainer: {
+        backgroundColor: theme.background,
+        },
+
+        contentContainer: {
         padding: 20,
-        paddingBottom: 40
-    },
-    centeredContainer: {
+        paddingBottom: 40,
+        },
+
+        centeredContainer: {
         flex: 1,
         alignItems: "center",
         justifyContent: "center",
-        padding: 24
-    },
-    statusText: {
+        padding: 24,
+        backgroundColor: theme.surface,
+        },
+
+        statusText: {
         marginTop: 12,
         fontSize: 16,
-        textAlign: "center"
-    },
-    errorTitle: {
+        textAlign: "center",
+        color: theme.textSecondary,
+        },
+
+        errorTitle: {
         marginBottom: 8,
         fontSize: 20,
-        fontWeight: "700"
-    },
-    errorMessage: {
+        fontWeight: "700",
+        color: theme.danger,
+        },
+
+        errorMessage: {
         marginBottom: 20,
         fontSize: 15,
-        textAlign: "center"
-    },
-    retryButton: {
+        textAlign: "center",
+        color: theme.textSecondary,
+        },
+
+        retryButton: {
         paddingHorizontal: 24,
         paddingVertical: 12,
         borderRadius: 8,
-        backgroundColor: "#222222"
-    },
-    retryButtonText: {
-        color: "#ffffff",
+        backgroundColor: theme.primaryDark,
+        },
+
+        retryButtonText: {
+        color: theme.textInverse,
         fontSize: 16,
-        fontWeight: "600"
-    },
-    date: {
+        fontWeight: "600",
+        },
+
+        date: {
         marginBottom: 18,
-        color: "#555555",
-        fontSize: 15
-    },
-    section: {
+        color: theme.textSecondary,
+        fontSize: 15,
+        },
+
+        section: {
         marginBottom: 18,
         padding: 16,
         borderRadius: 12,
-        backgroundColor: "#ffffff"
-    },
-    sectionTitle: {
+        backgroundColor: theme.surfaceElevated,
+        },
+
+        sectionTitle: {
         marginBottom: 14,
-        color: "#0c7489",
+        color: theme.primary,
         fontSize: 20,
-        fontWeight: "700"
-    },
-    row: {
+        fontWeight: "700",
+        },
+
+        row: {
         flexDirection: "row",
         alignItems: "flex-start",
         justifyContent: "space-between",
-        marginBottom: 12
-    },
-    flex: {
+        marginBottom: 12,
+        },
+
+        flex: {
         flex: 1,
-        marginRight: 16
-    },
-    itemName: {
+        marginRight: 16,
+        },
+
+        itemName: {
         fontSize: 16,
-        fontWeight: "600"
-    },
-    secondaryText: {
+        fontWeight: "600",
+        color: theme.text,
+        },
+
+        secondaryText: {
         marginTop: 3,
-        color: "#666666",
-        fontSize: 14
-    },
-    amount: {
+        color: theme.textSecondary,
+        fontSize: 14,
+        },
+
+        amount: {
         fontSize: 16,
-        fontWeight: "600"
-    },
-    summaryRow: {
+        fontWeight: "600",
+        color: theme.text,
+        },
+
+        summaryRow: {
         flexDirection: "row",
         justifyContent: "space-between",
-        marginBottom: 8
-    },
-    summaryLabel: {
-        fontSize: 15
-    },
-    summaryAmount: {
-        fontSize: 15
-    },
-    emphasizedText: {
+        marginBottom: 8,
+        },
+
+        summaryLabel: {
+        fontSize: 15,
+        color: theme.textSecondary,
+        },
+
+        summaryAmount: {
+        fontSize: 15,
+        color: theme.text,
+        },
+
+        emphasizedText: {
         fontSize: 18,
-        fontWeight: "700"
-    },
-    divider: {
+        fontWeight: "700",
+        color: theme.primaryDark,
+        },
+
+        divider: {
         height: 1,
         marginVertical: 8,
-        backgroundColor: "#dddddd"
-    },
-    personCard: {
+        backgroundColor: theme.divider,
+        },
+
+        personCard: {
         marginBottom: 14,
         padding: 14,
         borderWidth: 1,
-        borderColor: "#dddddd",
-        borderRadius: 10
-    },
-    personName: {
+        borderColor: theme.borderLight,
+        borderRadius: 10,
+        backgroundColor: theme.surfaceSecondary,
+        },
+
+        personName: {
         fontSize: 17,
-        fontWeight: "700"
-    },
-    personTotal: {
+        fontWeight: "700",
+        color: theme.text,
+        },
+
+        personTotal: {
         fontSize: 17,
-        fontWeight: "700"
-    },
-    personItemRow: {
+        fontWeight: "700",
+        color: theme.primary,
+        },
+
+        personItemRow: {
         flexDirection: "row",
-        justifyContent: "space-between"
-    },
-    personSummary: {
+        justifyContent: "space-between",
+        },
+
+        personSummary: {
         marginTop: 12,
         paddingTop: 12,
         borderTopWidth: 1,
-        borderTopColor: "#eeeeee"
-    }
+        borderTopColor: theme.divider,
+        },
 });

@@ -1,6 +1,8 @@
 import React from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { TipOption } from '../../types/newExpense';
+import { useThemeContext } from '../../theme/themeContext';
+import { AppTheme } from '../../theme/colors';
 
 type Props = {
     selectedOption: TipOption;
@@ -13,6 +15,9 @@ type Props = {
 const TIP_OPTIONS: TipOption[] = [0, 10, 15, 18, 20, "custom"];
 
 export default function TipSection({ selectedOption, customTipAmount, calculatedTip, onOptionChange, onCustomTipChange }: Props) {
+    const { theme } = useThemeContext();
+    const styles = getStyles(theme);
+    
     const getLabel = (option: TipOption) => {
         if (option === 0) return "No Tip";
         if (option === "custom") return "Custom";
@@ -59,21 +64,21 @@ export default function TipSection({ selectedOption, customTipAmount, calculated
     );
 }
 
-const styles = StyleSheet.create({ 
+const getStyles = (theme: AppTheme) => StyleSheet.create({ 
     section: { 
         marginBottom: 24, 
-        backgroundColor: "#d7d9ce", 
+        backgroundColor: theme.surface, 
         borderRadius: 12, 
         padding: 16, 
     }, 
     label: { 
-        color: "#0c7489", 
+        color: theme.primary, 
         fontSize: 16, 
         fontWeight: "600", 
         marginBottom: 6, 
     }, 
     helperText: { 
-        color: "#5f6368", 
+        color: theme.textSecondary, 
         fontSize: 13, 
         marginBottom: 12, 
     }, 
@@ -83,31 +88,31 @@ const styles = StyleSheet.create({
         marginBottom: 12, 
     }, 
     option: { 
-        backgroundColor: "#f4f4ef", 
+        backgroundColor: theme.surfaceSecondary, 
         borderRadius: 20, 
         paddingHorizontal: 14, 
         paddingVertical: 9, 
         marginRight: 8, 
         marginBottom: 8, 
         borderWidth: 1, 
-        borderColor: "#b3b5ae", 
+        borderColor: theme.border, 
     }, 
     selectedOption: { 
-        backgroundColor: "#0c7489", 
-        borderColor: "#0c7489", 
+        backgroundColor: theme.primaryDark, 
+        borderColor: theme.primary, 
     }, 
     optionText: { 
-        color: "#333", 
+        color: theme.textSecondary, 
         fontWeight: "500", 
     }, 
     selectedOptionText: { 
-        color: "#fff", 
+        color: theme.text, 
         fontWeight: "700", 
     }, 
     input: { 
-        backgroundColor: "#f4f4ef", 
+        backgroundColor: theme.surfaceSecondary, 
         borderWidth: 1, 
-        borderColor: "#808080", 
+        borderColor: theme.border, 
         borderRadius: 8, 
         padding: 12, 
         fontSize: 16, 
@@ -116,15 +121,15 @@ const styles = StyleSheet.create({
     tipSummary: { 
         flexDirection: "row", 
         justifyContent: "space-between", 
-        backgroundColor: "#f4f4ef", 
+        backgroundColor: theme.surfaceSecondary, 
         borderRadius: 8, 
         padding: 12, 
     }, 
     tipSummaryLabel: { 
-        color: "#444", 
+        color: theme.textSecondary, 
     }, 
     tipSummaryAmount: { 
-        color: "#13505b", 
+        color: theme.primaryDark, 
         fontWeight: "700", 
     }, 
 });

@@ -1,48 +1,56 @@
-import { Tabs } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import { Tabs } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import { useThemeContext } from "../../theme/themeContext";
 
 export default function TabLayout() {
+  const { theme } = useThemeContext();
+
   return (
     <Tabs
-    screenOptions={{
-      headerStyle: {
-        backgroundColor: "#D7d9ce",
-      },
-      headerTitleStyle: {
-        fontWeight: "bold",
-        color: "#0c7489",
-      },
-      headerTitleAlign: "center",
-      tabBarLabelPosition: "below-icon",
-      tabBarActiveTintColor: "#119da4",
-      tabBarInactiveTintColor: "#808080"
-    }}
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: theme.surface,
+        },
+        headerTitleStyle: {
+          fontWeight: "bold",
+          color: theme.primary,
+        },
+        headerTitleAlign: "center",
+        tabBarLabelPosition: "below-icon",
+        tabBarActiveTintColor: theme.primaryBright,
+        tabBarInactiveTintColor: theme.tabInactive,
+        tabBarStyle: {
+          backgroundColor: theme.surface,
+        },
+      }}
     >
-      <Tabs.Screen 
-        name="index" 
-        options={{ 
-          title: 'Home',
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: "Home",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="home" size={size} color={color} />
           ),
         }}
       />
-      <Tabs.Screen 
-        name="new-expense" 
-        options={{ 
-          title: 'New Expense',
+      <Tabs.Screen
+        name="new-expense"
+        options={{
+          title: "New Expense",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="add" size={size} color={color} />
           ),
-        }} 
+        }}
       />
       <Tabs.Screen
         name="settings"
         options={{
-          href: null,
+          title: "Settings",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="settings-outline" color={color} size={size} />
+          ),
         }}
       />
     </Tabs>
-
   );
 }

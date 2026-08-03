@@ -1,5 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { AppTheme } from '../../theme/colors';
+import { useThemeContext } from '../../theme/themeContext';
 
 type Props = {
     selectedState: string;
@@ -8,6 +10,9 @@ type Props = {
 };
 
 export default function StateSection({ selectedState, taxRate, onOpenPicker }: Props) {
+    const { theme } = useThemeContext();
+    const styles = getStyles(theme);
+
     return (
         <View style={styles.section}>
             <Text style={styles.label}>
@@ -39,29 +44,29 @@ export default function StateSection({ selectedState, taxRate, onOpenPicker }: P
     );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (theme: AppTheme) => StyleSheet.create({
   section: {
     marginBottom: 24,
-    backgroundColor: "#d7d9ce",
+    backgroundColor: theme.surface,
     borderRadius: 12,
     padding: 16,
-    shadowColor: "#000",
+    shadowColor: theme.shadow,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
     elevation: 2,
   },
   label: {
-    color: "#0c7489",
+    color: theme.primary,
     fontSize: 16,
     fontWeight: "600",
     marginBottom: 6,
   },
   required: {
-    color: "#ff3b30",
+    color: theme.danger,
   },
   subtitle: {
-    color: "#5f6368",
+    color: theme.textSecondary,
     fontSize: 13,
     marginBottom: 12,
   },
@@ -69,33 +74,33 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "#f4f4ef",
+    backgroundColor: theme.surfaceSecondary,
     padding: 14,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#808080",
+    borderColor: theme.border,
   },
   selectedText: {
-    color: "#040404",
+    color: theme.text,
     fontSize: 16,
     fontWeight: "500",
   },
   placeholderText: {
-    color: "#808080",
+    color: theme.textMuted,
     fontSize: 16,
   },
   dropdownIcon: {
-    color: "#119da4",
+    color: theme.primaryBright,
     fontSize: 14,
   },
   taxInfo: {
     marginTop: 10,
-    backgroundColor: "#f4f4ef",
+    backgroundColor: theme.surfaceSecondary,
     borderRadius: 8,
     padding: 10,
   },
   taxInfoText: {
-    color: "#0c7489",
+    color: theme.primaryDark,
     fontSize: 14,
     textAlign: "center",
   },
