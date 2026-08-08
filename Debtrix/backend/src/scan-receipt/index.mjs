@@ -2,8 +2,18 @@ import {
   AnalyzeExpenseCommand,
   TextractClient,
 } from "@aws-sdk/client-textract";
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { randomUUID } from "node:crypto";
 
 const textract = new TextractClient({});
+const s3 = new S3Client({});
+const receiptImagesBucket = process.env.RECEIPT_IMAGES_BUCKET;
+
+const imageTypes = {
+  jpeg: { contentType: "image/jpeg", extension: "jpg" },
+  jpg: { contentType: "image/jpeg", extension: "jpg" },
+  png: { contentType: "image/png", extension: "png" },
+};
 
 function response(statusCode, body) {
   return {
@@ -77,6 +87,10 @@ export const handler = async (event) => {
   }
 
   try {
+    if (!receiptImagesBucket) {
+      throw new Error("RECEIPT_IMAGES_BUCKET is not configured");
+    }
+
     const request = JSON.parse(event.body ?? "{}");
     const imageBase64 = request.imageBase64;
 
@@ -86,11 +100,22 @@ export const handler = async (event) => {
       });
     }
 
-    // Allows either raw Base64 or a data URL.
-    const cleanBase64 = imageBase64.replace(
-      /^data:image\/[a-zA-Z0-9.+-]+;base64,/,
-      "",
+    // Allows either raw Base64 or a JPEG/PNG data URL.
+    const dataUrlMatch = imageBase64.match(
+      /^data:image\/([a-zA-Z0-9.+-]+);base64,/,
     );
+    const imageType = dataUrlMatch?.[1]?.toLowerCase() ?? "jpeg";
+    const imageMetadata = imageTypes[imageType];
+
+    if (!imageMetadata) {
+      return response(400, {
+        message: "Receipt images must be JPEG or PNG files",
+      });
+    }
+
+    const cleanBase64 = dataUrlMatch
+      ? imageBase64.slice(dataUrlMatch[0].length)
+      : imageBase64;
 
     const imageBytes = Buffer.from(cleanBase64, "base64");
 
@@ -100,10 +125,24 @@ export const handler = async (event) => {
       });
     }
 
+    const objectKey = `receipts/${new Date().toISOString().slice(0, 10)}/${randomUUID()}.${imageMetadata.extension}`;
+
+    await s3.send(
+      new PutObjectCommand({
+        Bucket: receiptImagesBucket,
+        Key: objectKey,
+        Body: imageBytes,
+        ContentType: imageMetadata.contentType,
+      }),
+    );
+
     const textractResult = await textract.send(
       new AnalyzeExpenseCommand({
         Document: {
-          Bytes: imageBytes,
+          S3Object: {
+            Bucket: receiptImagesBucket,
+            Name: objectKey,
+          },
         },
       }),
     );

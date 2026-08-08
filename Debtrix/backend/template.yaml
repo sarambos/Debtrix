@@ -66,6 +66,23 @@ Resources:
       KeySchema:
         - AttributeName: receiptId
           KeyType: HASH
+  ReceiptImagesBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      LifecycleConfiguration:
+        Rules:
+          - Id: DeleteUploadedReceiptImages
+            Status: Enabled
+            ExpirationInDays: 7
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
   ListReceiptsFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -100,7 +117,12 @@ Resources:
       CodeUri: src/scan-receipt/
       Handler: index.handler
       Timeout: 30
+      Environment:
+        Variables:
+          RECEIPT_IMAGES_BUCKET: !Ref ReceiptImagesBucket
       Policies:
+        - S3CrudPolicy:
+            BucketName: !Ref ReceiptImagesBucket
         - Statement:
             - Sid: AnalyzeReceiptWithTextract
               Effect: Allow

@@ -6,11 +6,15 @@ import { useNavigation } from '@react-navigation/native';
 import { useCallback, useEffect, useLayoutEffect } from 'react';
 import { CalculateSplitResult } from '../types/receipt';
 import { Ionicons } from '@expo/vector-icons';
+import { useThemeContext } from '../theme/themeContext';
+import { AppTheme } from '../theme/colors';
 
 export default function Split() {
   const { splitResult } = useLocalSearchParams<{ splitResult?: string;}>();
   const navigation = useNavigation();
   const router = useRouter();
+  const { theme } = useThemeContext();
+  const styles = getStyles(theme);
 
   const goHome = useCallback(() => {
     router.replace("/");
@@ -32,7 +36,7 @@ export default function Split() {
                 <Ionicons
                   name="chevron-back"
                   size={26}
-                  color="#0c7489"
+                  color={theme.primaryDark}
                 />
               </Pressable>
             )
@@ -65,14 +69,15 @@ export default function Split() {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (theme: AppTheme) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: theme.surface,
     justifyContent: 'center',
   },
   backButton: {
     paddingHorizontal: 8,
     paddingVertical: 4,
+    color: theme.textSecondary
   }
 });
