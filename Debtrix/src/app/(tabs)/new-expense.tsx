@@ -11,7 +11,7 @@ import { useNewExpenseForm } from "../../hooks/useNewExpenseForm";
 import { buildReceipt, validateNewExpenseForm } from '../../lib/newExpense'
 import { calculateSplitOnAws } from "../../api/debtrixApi";
 import * as ImagePicker from "expo-image-picker";
-import { scanReceiptImage } from "../../api/receiptScanner";
+import { uploadAndScanReceipt } from "../../api/receiptUploader";
 import { AppTheme } from "../../theme/colors";
 import { useThemeContext } from "../../theme/themeContext";
 
@@ -36,11 +36,11 @@ export default function NewExpense() {
         return;
       }
 
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ["images"],
-        base64: true,
-        quality: 0.7,
-      });
+      const result =
+        await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ["images"],
+          quality: 0.7,
+        });
 
       if (result.canceled) {
         return;
@@ -48,14 +48,18 @@ export default function NewExpense() {
 
       const image = result.assets[0];
 
-      if (!image?.base64) {
-        throw new Error("The selected image could not be read.");
+      if (!image) {
+        throw new Error(
+          "The selected image could not be read.",
+        );
       }
 
       setReceiptImage(image);
       setIsScanning(true);
 
-      const scannedReceipt = await scanReceiptImage(image.base64);
+      const scannedReceipt =
+        await uploadAndScanReceipt(image);
+
       form.applyScannedReceipt(scannedReceipt);
 
       Alert.alert(
@@ -70,7 +74,10 @@ export default function NewExpense() {
           ? error.message
           : "The receipt could not be scanned.";
 
-      Alert.alert("Unable to scan receipt", message);
+      Alert.alert(
+        "Unable to scan receipt",
+        message,
+      );
     } finally {
       setIsScanning(false);
     }
