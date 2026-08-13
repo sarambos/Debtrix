@@ -25,6 +25,8 @@ export default function NewExpense() {
 
   const handleScanReceipt = async () => {
     try {
+      console.log("Starting receipt scan...");
+
       const permission =
         await ImagePicker.requestMediaLibraryPermissionsAsync();
 
@@ -59,6 +61,11 @@ export default function NewExpense() {
 
       const scannedReceipt =
         await uploadAndScanReceipt(image);
+      
+      console.log(
+        "SCANNED RECEIPT RESULT:",
+        JSON.stringify(scannedReceipt, null, 2),
+      );
 
       form.applyScannedReceipt(scannedReceipt);
 
@@ -80,10 +87,15 @@ export default function NewExpense() {
       );
     } finally {
       setIsScanning(false);
+      console.log("Receipt scan process completed.");
     }
   };
   const { theme } = useThemeContext();
   const styles = getStyles(theme);
+
+  const formState = form.getFormState();
+  const validationError = validateNewExpenseForm(formState);
+  const canSubmit = !validationError && !isSubmitting && !isScanning;
 
   const handleSubmit = async () => {
     const formState = form.getFormState();
@@ -210,16 +222,25 @@ export default function NewExpense() {
           }}
           onCustomTipChange={form.setCustomTipAmount}
         />
+        {validationError ? (
+          <Text style={styles.validationError} accessibilityElementsHidden>
+            {validationError}
+          </Text>
+        ) : null}
+
         <TouchableOpacity
           style={[
             styles.submitButton,
-            (isSubmitting || isScanning) && styles.submitButtonDisabled,
+            !canSubmit && styles.submitButtonDisabled,
           ]}
           onPress={handleSubmit}
           accessibilityRole="button"
-          disabled={isSubmitting || isScanning}
+          disabled={!canSubmit}
         >
-          <Text style={styles.submitButtonText}>
+          <Text style={[
+            styles.submitButtonText,
+            !canSubmit && styles.submitButtonTextDisabled
+          ]}>
             {isSubmitting ? "Calculating..." : "Calculate Split"}
           </Text>
         </TouchableOpacity>
@@ -323,12 +344,26 @@ const getStyles = (theme: AppTheme) =>
     elevation: 3,
   },
   submitButtonDisabled: {
-    opacity: 0.6,
+    backgroundColor: theme.primaryMuted,
+    shadowOpacity: 0,
+    elevation: 0,
+    borderWidth: 1,
+    borderColor: theme.borderLight,
   },
   submitButtonText: {
-    color: theme.primary,
+    color: theme.textInverse,
     fontSize: 18,
     fontWeight: "700",
+  },
+  submitButtonTextDisabled: {
+    color: theme.textMuted,
+    fontSize: 18,
+    fontWeight: "700",
+  },
+  validationError: {
+    color: theme.danger,
+    textAlign: "center",
+    marginBottom: 8,
   },
   bottomSpacing: {
     height: 40,

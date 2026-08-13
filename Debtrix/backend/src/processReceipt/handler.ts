@@ -187,6 +187,11 @@ async function processRecord(record: S3EventRecord) {
 
     const expenseDocument =
       textractResponse.ExpenseDocuments?.[0];
+    
+    console.log(
+      "TEXTRACT EXPENSE DOCUMENT:",
+      JSON.stringify(expenseDocument, null, 2),
+    );
 
     if (!expenseDocument) {
       throw new Error(
@@ -238,6 +243,11 @@ async function processRecord(record: S3EventRecord) {
       ),
       items,
     };
+
+    console.log(
+      "PARSED RECEIPT RESULT:",
+      JSON.stringify(result, null, 2),
+    );
 
     await documentClient.send(
       new UpdateCommand({
