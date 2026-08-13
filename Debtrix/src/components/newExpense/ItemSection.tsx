@@ -257,10 +257,10 @@ const getStyles = (theme: AppTheme) => StyleSheet.create({
     opacity: 0.45,
   },
   chipText: {
-    color: theme.textMuted,
+    color: theme.textSecondary,
   },
   selectedChipText: {
-    color: theme.text,
+    color: theme.textInverse,
     fontWeight: "600",
   },
   addButton: {
