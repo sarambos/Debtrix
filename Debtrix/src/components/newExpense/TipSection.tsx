@@ -106,7 +106,7 @@ const getStyles = (theme: AppTheme) => StyleSheet.create({
         fontWeight: "500", 
     }, 
     selectedOptionText: { 
-        color: theme.text, 
+        color: theme.textInverse, 
         fontWeight: "700", 
     }, 
     input: { 
