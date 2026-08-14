@@ -1,8 +1,7 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: Debtrix serverless backend
 
-# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
     Runtime: nodejs22.x
@@ -16,7 +15,7 @@ Globals:
 
 Resources:
   DebtrixHttpApi:
-    Type: AWS::Serverless::HttpApi # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Type: AWS::Serverless::HttpApi
     Properties:
       StageName: prod
       CorsConfiguration:
@@ -30,32 +29,7 @@ Resources:
           - POST
           - OPTIONS
           - DELETE
-  CalculateSplitFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: .
-      Handler: src/calculateSplit/handler.handler
-      Events:
-        CalculateSplit:
-          Type: HttpApi
-          Properties:
-            ApiId: !Ref DebtrixHttpApi
-            Path: /calculate-split
-            Method: POST
-      Environment:
-        Variables:
-          RECEIPTS_TABLE_NAME: !Ref ReceiptsTable
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref ReceiptsTable
-    Metadata:
-      BuildMethod: esbuild
-      BuildProperties:
-        EntryPoints:
-          - src/calculateSplit/handler.ts
-        Minify: true
-        Sourcemap: true
-        Target: es2022
+
   ReceiptsTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -66,12 +40,123 @@ Resources:
       KeySchema:
         - AttributeName: receiptId
           KeyType: HASH
+
+  ReceiptScanJobsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: jobId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: jobId
+          KeyType: HASH
+      TimeToLiveSpecification:
+        AttributeName: expiresAt
+        Enabled: true
+
+  ReceiptImagesBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "debtrix-receipts-${AWS::AccountId}-${AWS::Region}"
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      CorsConfiguration:
+        CorsRules:
+          - AllowedHeaders:
+              - "*"
+            AllowedMethods:
+              - PUT
+            AllowedOrigins:
+              - "*"
+            ExposedHeaders:
+              - ETag
+            MaxAge: 3000
+      LifecycleConfiguration:
+        Rules:
+          - Id: DeleteUploadedReceiptImages
+            Status: Enabled
+            ExpirationInDays: 7
+
+  ReceiptUploadIdentityPool:
+    Type: AWS::Cognito::IdentityPool
+    Properties:
+      IdentityPoolName: debtrix_receipt_uploads
+      AllowUnauthenticatedIdentities: true
+
+  ReceiptUploadGuestRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated: cognito-identity.amazonaws.com
+            Action:
+              - sts:AssumeRoleWithWebIdentity
+            Condition:
+              StringEquals:
+                cognito-identity.amazonaws.com:aud: !Ref ReceiptUploadIdentityPool
+              ForAnyValue:StringLike:
+                cognito-identity.amazonaws.com:amr: unauthenticated
+      Policies:
+        - PolicyName: UploadIncomingReceipts
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: UploadReceipt
+                Effect: Allow
+                Action:
+                  - s3:PutObject
+                Resource: !Sub "${ReceiptImagesBucket.Arn}/receipts/incoming/*"
+
+  ReceiptUploadIdentityPoolRoles:
+    Type: AWS::Cognito::IdentityPoolRoleAttachment
+    Properties:
+      IdentityPoolId: !Ref ReceiptUploadIdentityPool
+      Roles:
+        unauthenticated: !GetAtt ReceiptUploadGuestRole.Arn
+
+  CalculateSplitFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: src/calculateSplit/handler.handler
+      Environment:
+        Variables:
+          RECEIPTS_TABLE_NAME: !Ref ReceiptsTable
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ReceiptsTable
+      Events:
+        CalculateSplit:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref DebtrixHttpApi
+            Path: /calculate-split
+            Method: POST
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        EntryPoints:
+          - src/calculateSplit/handler.ts
+        Minify: true
+        Sourcemap: true
+        Target: es2022
+
   ListReceiptsFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: .
       Handler: src/listReceipts/handler.handler
-      Runtime: nodejs22.x
       Environment:
         Variables:
           RECEIPTS_TABLE_NAME: !Ref ReceiptsTable
@@ -84,7 +169,7 @@ Resources:
           Properties:
             ApiId: !Ref DebtrixHttpApi
             Path: /receipts
-            Method: get
+            Method: GET
     Metadata:
       BuildMethod: esbuild
       BuildProperties:
@@ -94,10 +179,86 @@ Resources:
         Sourcemap: true
         Target: es2022
 
+  ProcessReceiptFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: src/processReceipt/handler.handler
+      Timeout: 30
+      Environment:
+        Variables:
+          RECEIPT_SCAN_JOBS_TABLE_NAME: !Ref ReceiptScanJobsTable
+      Policies:
+        - S3ReadPolicy:
+            BucketName: !Sub "debtrix-receipts-${AWS::AccountId}-${AWS::Region}"
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ReceiptScanJobsTable
+        - Statement:
+            - Sid: AnalyzeReceiptWithTextract
+              Effect: Allow
+              Action:
+                - textract:AnalyzeExpense
+              Resource: "*"
+      Events:
+        ReceiptUploaded:
+          Type: S3
+          Properties:
+            Bucket: !Ref ReceiptImagesBucket
+            Events: s3:ObjectCreated:*
+            Filter:
+              S3Key:
+                Rules:
+                  - Name: prefix
+                    Value: receipts/incoming/
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        EntryPoints:
+          - src/processReceipt/handler.ts
+        Minify: true
+        Sourcemap: true
+        Target: es2022
+
+  GetReceiptScanFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: src/getReceiptScan/handler.handler
+      Environment:
+        Variables:
+          RECEIPT_SCAN_JOBS_TABLE_NAME: !Ref ReceiptScanJobsTable
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref ReceiptScanJobsTable
+      Events:
+        GetReceiptScan:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref DebtrixHttpApi
+            Path: /receipt-scans/{jobId}
+            Method: GET
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        EntryPoints:
+          - src/getReceiptScan/handler.ts
+        Minify: true
+        Sourcemap: true
+        Target: es2022
+
 Outputs:
-  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
-  # Find out more about other implicit resources you can reference within SAM
-  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
   ApiUrl:
     Description: Debtrix API URL
     Value: !Sub "https://${DebtrixHttpApi}.execute-api.${AWS::Region}.amazonaws.com/prod"
+
+  ReceiptImagesBucketName:
+    Description: Receipt image upload bucket
+    Value: !Ref ReceiptImagesBucket
+
+  ReceiptUploadIdentityPoolId:
+    Description: Cognito identity pool used by the mobile app
+    Value: !Ref ReceiptUploadIdentityPool
+
+  AwsRegion:
+    Description: AWS deployment Region
+    Value: !Ref AWS::Region

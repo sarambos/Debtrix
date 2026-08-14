@@ -7,8 +7,8 @@ stack_name = "debtrix"
 region = "us-east-1"
 
 [default.build.parameters]
-cached = true
-parallel = true
+cached = false
+parallel = false
 
 [default.validate.parameters]
 lint = true
@@ -19,7 +19,6 @@ confirm_changeset = true
 resolve_s3 = true
 stack_name = "debtrix-backend-dev"
 s3_prefix = "debtrix-backend-dev"
-region = "us-east-1"
 disable_rollback = false
 image_repositories = []
 

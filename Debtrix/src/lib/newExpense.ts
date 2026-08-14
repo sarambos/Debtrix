@@ -50,6 +50,19 @@ export function calculateTipAmount(subtotal: number, tipOption: TipOption, custo
     return subtotal * (tipOption / 100);
 }
 
+export function calculateFormTax(
+    form: NewExpenseFormState,
+    subtotal: number
+): number {
+    return (
+        form.scannedTaxAmount ??
+        calculateTaxAmount(
+            subtotal,
+            getTaxRate(form.selectedState)
+        )
+    );
+}
+
 export function validateNewExpenseForm(form: NewExpenseFormState): string | null {
     const numOfPeople = Number.parseInt(form.numPeople, 10);
 
@@ -100,10 +113,19 @@ export function validateNewExpenseForm(form: NewExpenseFormState): string | null
     if (form.tipOption === "custom" && parseCurrency(form.customTipAmount) < 0) {
         return "Enter a valid custom tip amount.";
     }
+    if (
+        form.scannedTaxAmount !== null &&
+        (
+            !Number.isFinite(form.scannedTaxAmount) ||
+            form.scannedTaxAmount < 0
+        )
+    ) {
+        return "The scanned tax amount is invalid.";
+    }
 
     const enteredTotal = parseCurrency(form.totalAmount);
     const subtotal = calculateItemsSubtotal(form.items);
-    const tax = calculateTaxAmount(subtotal, getTaxRate(form.selectedState));
+    const tax = calculateFormTax(form, subtotal);
     const tip = calculateTipAmount(subtotal, form.tipOption, form.customTipAmount);
     const computedTotal = subtotal + tax + tip;
 
@@ -120,8 +142,7 @@ export function validateNewExpenseForm(form: NewExpenseFormState): string | null
 
 export function buildReceipt(form: NewExpenseFormState): CalculateSplitInput {
     const subtotal = calculateItemsSubtotal(form.items);
-    const taxRate = getTaxRate(form.selectedState);
-    const tax = calculateTaxAmount(subtotal, taxRate);
+    const tax = calculateFormTax(form, subtotal);
     const tip = calculateTipAmount(subtotal, form.tipOption, form.customTipAmount);
 
     const receiptItems: ReceiptItem[] = form.items.map(

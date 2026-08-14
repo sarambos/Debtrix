@@ -27,6 +27,15 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow Debtrix to access your photos so you can scan receipts.",
+          "microphonePermission": false
+        }
+      ]
+    ]
   }
 }
