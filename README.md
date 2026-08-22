@@ -144,3 +144,14 @@ Debtrix was developed as a collaborative project by:
 
 - [Stephanie Sarambo](https://github.com/sarambos)
 - [Marian Sousan](https://github.com/MSDS1203)
+
+### Stephanie's Contributions
+- Refined the expense creation and bill-splitting workflow, including participant management, item assignment, tax, and tip handling.
+- Built and integrated AWS backend functionality using API Gateway, Lambda, DynamoDB, and AWS SAM.
+- Connected the React Native frontend to the backend API for split calculations and receipt data.
+- Implemented receipt history functionality backed by DynamoDB, including viewing previously calculated expenses and their details.
+- Developed and organized application theming, including light and dark mode support.
+- Added backend unit testing with Jest and tested Lambda functionality locally with AWS SAM.
+- Refactored and organized frontend code to improve component reuse, configuration management, and maintainability.
+
+### Marian's Contributions
