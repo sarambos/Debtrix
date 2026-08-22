@@ -43,7 +43,9 @@ The app includes an AWS backend for receipt processing, split calculation, and r
 
 ## Architechture 
 
-![Debtrix Architecture](<img width="960" height="700" alt="Debtrix Architecture Diagram" src="https://github.com/user-attachments/assets/b5eaad97-d9fa-472a-81bf-a774825649a2" />)
+<p align="center">
+   <img src="images/Debtrix Architecture Diagram.png" width="600" height="600">
+</p>
 
 ### How it works
 1. A user adds participants and receipt items manually, or chooses a receipt image to scan.
