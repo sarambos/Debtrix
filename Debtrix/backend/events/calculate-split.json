@@ -1,0 +1,16 @@
+{
+    "version": "2.0",
+    "routeKey": "POST /calculate-split",
+    "rawPath": "/calculate-split",
+    "headers": {
+        "content-type": "application/json"
+    },
+    "requestContext": {
+        "http": {
+            "method": "POST",
+            "path": "/calculate-split"
+        }
+    },
+    "body": "{\"items\":[{\"id\":\"1\",\"name\":\"Pizza\",\"price\":24,\"assignedTo\":[\"Stephanie\",\"Alex\"]},{\"id\":\"2\",\"name\":\"Drink\",\"price\":4,\"assignedTo\":[\"Stephanie\"]}],\"tax\":2.1,\"tip\":5}",
+    "isBase64Encoded": false
+}

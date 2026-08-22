@@ -1,116 +1,103 @@
-import { Text, View, StyleSheet } from 'react-native';
-import { Receipt } from '../types/types';
+import { Text, View, StyleSheet, ScrollView } from 'react-native';
+import { CalculateSplitResult } from '../types/receipt';
+import { useThemeContext } from '../theme/themeContext';
+import { AppTheme } from '../theme/colors';
 
 type Props = {
-    receipt: Receipt;
+    result: CalculateSplitResult | null;
 };
 
-type PersonBreakdown = {
-  person: string;
-  total: number;
-  items: {
-    name: string;
-    amount: number;
-  }[];
-};
-
-const calculateBalances = (receipt: Receipt): PersonBreakdown[] => {
-  const balances: Record<string, number> = {};
-  const itemMap: Record<string, { name: string; amount: number }[]> = {};
-
-  receipt.items.forEach((item) => {
-    const split = item.price / item.assignedTo.length;
-
-    item.assignedTo.forEach((person) => {
-      if (!balances[person]) balances[person] = 0;
-      if (!itemMap[person]) itemMap[person] = [];
-      balances[person] += split;
-
-      itemMap[person].push({
-        name: item.name,
-        amount: split,
-      });
-    });
-  });
-
-  const subtotal = Object.values(balances).reduce((a, b) => a + b, 0);
-
-  Object.keys(balances).forEach((person) => {
-    const proportion = balances[person] / subtotal;
-    const taxShare = (receipt.tax || 0) * proportion;
-
-    balances[person] += taxShare;
-
-    itemMap[person].push({
-      name: "Tax",
-      amount: taxShare,
-    });
-  });
-
-  if (receipt.tip) {
-    Object.keys(balances).forEach((person) => {
-      const proportion = balances[person] / subtotal;
-      const tipShare = receipt.tip! * proportion;
-
-      balances[person] += tipShare;
-
-      itemMap[person].push({
-        name: "Tip",
-        amount: tipShare,
-      });
-    });
+export default function BalanceList({ result }: Props) { 
+  const { theme } = useThemeContext();
+  const styles = getStyles(theme);
+  
+  if (!result) {
+    return (
+      <View style={styles.centered}>
+        <Text>Split result is unavailable.</Text>
+      </View>
+    );
   }
 
-  return Object.keys(balances).map((person) => ({
-    person,
-    total: parseFloat(balances[person].toFixed(2)),
-    items: itemMap[person].map((item) => ({
-      name: item.name,
-      amount: parseFloat(item.amount.toFixed(2)),
-    })),
-  }));
-};
-
-export default function BalanceList({receipt}: Props) { 
-  const result = calculateBalances(receipt);
-
   return (
-    <View style={styles.container}>
-      {result.map((personData) => (
+    <ScrollView contentContainerStyle={styles.container}>
+      <View style={styles.summaryCard}>
+        <Text style={styles.summaryText}>
+          Subtotal: ${result.subtotal.toFixed(2)}
+        </Text>
+        <Text style={styles.summaryText}>
+          Tax: ${result.tax.toFixed(2)}
+        </Text>
+        <Text style={styles.summaryText}>
+          Tip: ${result.tip.toFixed(2)}
+        </Text>
+        <Text style={styles.summaryText}>
+          Total: ${result.total.toFixed(2)}
+        </Text>
+      </View>
+      {result.people.map((personData) => (
         <View key={personData.person} style={styles.card}>
-          
-          {/* Header */}
           <View style={styles.header}>
             <Text style={styles.person}>{personData.person}</Text>
             <Text style={styles.total}>
               ${personData.total.toFixed(2)}
             </Text>
           </View>
-
-          {/* Item Breakdown */}
-          {personData.items.map((item, index) => (
-            <View key={index} style={styles.itemRow}>
+          {personData.items.map((item) => (
+            <View key={item.id} style={styles.itemRow}>
               <Text style={styles.itemName}>{item.name}</Text>
               <Text style={styles.itemAmount}>
                 ${item.amount.toFixed(2)}
               </Text>
             </View>
           ))}
-
+          <View style={styles.itemRow}>
+            <Text style={styles.itemName}>Tax</Text>
+            <Text style={styles.itemAmount}>
+              ${personData.taxShare.toFixed(2)}
+            </Text>
+          </View>
+          <View style={styles.itemRow}>
+            <Text style={styles.itemName}>Tip</Text>
+            <Text style={styles.itemAmount}>
+              ${personData.tipShare.toFixed(2)}
+            </Text>
+          </View>
         </View>
       ))}
-    </View>
+    </ScrollView>
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (theme: AppTheme) => StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
     padding: 16,
+    backgroundColor: theme.surface,
+  },
+  centered: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: theme.surface,
+  },
+  summaryCard: {
+    padding: 16,
+    borderRadius: 12,
+    backgroundColor: theme.surfaceSecondary,
+    marginBottom: 12
+  },
+  summaryText: {
+    fontSize: 15,
+    marginBottom: 4,
+    color: theme.primaryDark
+  },
+  summaryTotal: {
+    fontSize: 18,
+    fontWeight: '700',
+    marginTop: 4
   },
   card: {
-    backgroundColor: '#3b3f45',
+    backgroundColor: theme.surfaceSecondary,
     width: '100%',
     padding: 14,
     marginVertical: 8,
@@ -120,14 +107,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 8,
+    backgroundColor: theme.surfaceSecondary,
   },
   person: {
-    color: '#fff',
+    color: theme.primary,
     fontSize: 18,
     fontWeight: 'bold',
   },
   total: {
-    color: '#00ff94',
+    color: theme.success,
     fontSize: 18,
     fontWeight: 'bold',
   },
@@ -137,11 +125,11 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
   },
   itemName: {
-    color: '#ccc',
+    color: theme.textSecondary,
     fontSize: 14,
   },
   itemAmount: {
-    color: '#ccc',
+    color: theme.textSecondary,
     fontSize: 14,
   },
 });

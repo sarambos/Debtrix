@@ -11,13 +11,17 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@aws-sdk/client-cognito-identity": "^3.1107.0",
+    "@aws-sdk/client-s3": "^3.1107.0",
+    "@aws-sdk/credential-providers": "^3.1107.0",
     "@expo/metro-runtime": "~55.0.6",
-    "axios": "^1.13.6",
     "expo": "~55.0.8",
     "expo-camera": "~55.0.10",
+    "expo-crypto": "~55.0.17",
     "expo-file-system": "~55.0.11",
     "expo-image-picker": "~55.0.13",
     "expo-router": "^55.0.7",
