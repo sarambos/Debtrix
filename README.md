@@ -155,3 +155,10 @@ Debtrix was developed as a collaborative project by:
 - Refactored and organized frontend code to improve component reuse, configuration management, and maintainability.
 
 ### Marian's Contributions
+- Built the initial navigation, expense-entry screen, and balance-display prototypes.
+- Developed a receipt-scanning Lambda using AWS Textract to extract merchant details, line items, subtotal, tax, tip, service charges, and total.
+- Connected the React Native scanner to the backend and automatically populated the expense form with extracted receipt data.
+- Integrated scanned tax values into expense totals and bill-splitting calculations.
+- Implemented secure receipt-image uploads to Amazon S3 using Cognito credentials and unique scan-job identifiers.
+- Built asynchronous receipt processing and status retrieval using S3-triggered Lambda functions, DynamoDB, and API Gateway.
+- Configured the AWS SAM resources, permissions, lifecycle rules, and environment settings required for the receipt-scanning system.
