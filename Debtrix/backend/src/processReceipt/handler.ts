@@ -10,6 +10,7 @@ import {
   UpdateCommand,
 } from "@aws-sdk/lib-dynamodb";
 import type { S3Event, S3EventRecord } from "aws-lambda";
+import { processReceipt } from "./processReceipt";
 
 const textract = new TextractClient({});
 
@@ -21,85 +22,6 @@ const documentClient = DynamoDBDocumentClient.from(
     },
   },
 );
-
-type ExpenseFieldLike = {
-  Type?: {
-    Text?: string;
-  };
-  ValueDetection?: {
-    Text?: string;
-    Confidence?: number;
-  };
-};
-
-type LineItemLike = {
-  LineItemExpenseFields?: ExpenseFieldLike[];
-};
-
-function parseMoney(value?: string): number | undefined {
-  if (!value) {
-    return undefined;
-  }
-
-  const cleaned = value
-    .replace(/[^\d,.-]/g, "")
-    .replace(/,(?=\d{2}$)/, ".")
-    .replace(/,/g, "");
-
-  const number = Number.parseFloat(cleaned);
-
-  return Number.isFinite(number) ? number : undefined;
-}
-
-function summaryValue(
-  summaryFields: ExpenseFieldLike[],
-  type: string,
-): string | undefined {
-  return summaryFields.find(
-    (field) => field.Type?.Text === type,
-  )?.ValueDetection?.Text;
-}
-
-function parseLineItem(
-  lineItem: LineItemLike,
-  index: number,
-) {
-  const fields = lineItem.LineItemExpenseFields ?? [];
-
-  const itemField = fields.find(
-    (field) => field.Type?.Text === "ITEM",
-  );
-
-  const rowField = fields.find(
-    (field) => field.Type?.Text === "EXPENSE_ROW",
-  );
-
-  const priceField = fields.find(
-    (field) => field.Type?.Text === "PRICE",
-  );
-
-  const price = parseMoney(
-    priceField?.ValueDetection?.Text,
-  );
-
-  if (price === undefined) {
-    return null;
-  }
-
-  return {
-    name:
-      itemField?.ValueDetection?.Text ??
-      rowField?.ValueDetection?.Text ??
-      `Item ${index + 1}`,
-    price,
-    confidence: Math.min(
-      itemField?.ValueDetection?.Confidence ??
-        rowField?.ValueDetection?.Confidence ??
-        100,
-      priceField?.ValueDetection?.Confidence ?? 100,
-    ),
-  };
-}
 
 function objectKeyFromRecord(record: S3EventRecord) {
   return decodeURIComponent(
@@ -187,62 +109,13 @@ async function processRecord(record: S3EventRecord) {
 
     const expenseDocument =
       textractResponse.ExpenseDocuments?.[0];
-    
+
     console.log(
       "TEXTRACT EXPENSE DOCUMENT:",
       JSON.stringify(expenseDocument, null, 2),
     );
 
-    if (!expenseDocument) {
-      throw new Error(
-        "Textract did not detect a receipt.",
-      );
-    }
-
-    const summaryFields =
-      expenseDocument.SummaryFields ?? [];
-
-    const items = (
-      expenseDocument.LineItemGroups ?? []
-    )
-      .flatMap((group) => group.LineItems ?? [])
-      .map(parseLineItem)
-      .filter(
-        (
-          item,
-        ): item is NonNullable<typeof item> =>
-          item !== null,
-      );
-
-    const result = {
-      vendorName: summaryValue(
-        summaryFields,
-        "VENDOR_NAME",
-      ),
-      date: summaryValue(
-        summaryFields,
-        "INVOICE_RECEIPT_DATE",
-      ),
-      subtotal: parseMoney(
-        summaryValue(summaryFields, "SUBTOTAL"),
-      ),
-      tax: parseMoney(
-        summaryValue(summaryFields, "TAX"),
-      ),
-      tip: parseMoney(
-        summaryValue(summaryFields, "GRATUITY"),
-      ),
-      serviceCharge: parseMoney(
-        summaryValue(
-          summaryFields,
-          "SERVICE_CHARGE",
-        ),
-      ),
-      total: parseMoney(
-        summaryValue(summaryFields, "TOTAL"),
-      ),
-      items,
-    };
+    const result = processReceipt(expenseDocument);
 
     console.log(
       "PARSED RECEIPT RESULT:",
