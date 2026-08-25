@@ -16,7 +16,12 @@ The app includes an AWS backend for receipt processing, split calculation, and r
 - Switch between light and dark themes.
 - Run on Android, iOS, and the web through Expo.
 
-<!--- ## Demo --->
+## Demo
+
+
+
+https://github.com/user-attachments/assets/0a8c3f85-7881-4cd3-ba27-86bcbca45e86
+
 
 
 ## Tech stack 
