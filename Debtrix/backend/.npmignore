@@ -1,1 +1,3 @@
-tests/*
+tests/
+coverage/
+.aws-sam/

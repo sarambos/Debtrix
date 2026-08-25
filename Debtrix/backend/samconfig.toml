@@ -3,7 +3,7 @@
 version = 0.1
 
 [default.global.parameters]
-stack_name = "debtrix"
+stack_name = "debtrix-backend-dev"
 region = "us-east-1"
 
 [default.build.parameters]
