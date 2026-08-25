@@ -170,7 +170,7 @@ export default function NewExpense() {
           >
             {isScanning ? (
               <>
-                <ActivityIndicator color="#fff" />
+                <ActivityIndicator color={theme.textInverse} />
                 <Text style={styles.scanButtonText}>Scanning...</Text>
               </>
             ) : (
@@ -282,24 +282,24 @@ const getStyles = (theme: AppTheme) =>
     marginBottom: 20,
   },
   scanCard: {
-    backgroundColor: "#d7d9ce",
+    backgroundColor: theme.surface,
     borderRadius: 12,
     padding: 16,
     marginBottom: 24,
-    shadowColor: "#000",
+    shadowColor: theme.shadow,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
     elevation: 2,
   },
   scanTitle: {
-    color: "#0c7489",
+    color: theme.primary,
     fontSize: 16,
     fontWeight: "700",
     marginBottom: 6,
   },
   scanDescription: {
-    color: "#5f6368",
+    color: theme.textSecondary,
     fontSize: 13,
     lineHeight: 18,
     marginBottom: 14,
@@ -307,13 +307,13 @@ const getStyles = (theme: AppTheme) =>
   receiptPreview: {
     width: "100%",
     height: 180,
-    backgroundColor: "#f4f4ef",
+    backgroundColor: theme.surfaceSecondary,
     borderRadius: 8,
     marginBottom: 14,
   },
   scanButton: {
     minHeight: 46,
-    backgroundColor: "#0c7489",
+    backgroundColor: theme.primary,
     borderRadius: 8,
     paddingHorizontal: 14,
     paddingVertical: 12,
@@ -326,7 +326,7 @@ const getStyles = (theme: AppTheme) =>
     opacity: 0.65,
   },
   scanButtonText: {
-    color: "#fff",
+    color: theme.textInverse,
     fontSize: 16,
     fontWeight: "700",
   },
